@@ -11,40 +11,126 @@
 # subscriber" has no variance to explain and every correlation collapses.
 # The small channels are where the interesting signal lives.
 #
-# Use @handles (easiest to find — it's in the channel URL) or raw channel
-# IDs starting with UC. Both work.
+# SAMPLING NOTE (say this before an interviewer says it to you)
+# ------------------------------------------------------------
+# This is a PURPOSIVE sample of Indian-market creators, not a random one.
+# Findings describe these channels, not YouTube as a whole. The niches were
+# chosen because Indian creators are less studied than US ones, which makes
+# the project's market story concrete.
 #
-# Replace these placeholders with real channels in YOUR chosen niches.
-# Indian creator niches are a good choice: less-studied than US ones, and
-# it makes the project's market story concrete.
+# Every handle below was checked to resolve to a live channel before being
+# added. Sizes are approximate and drift — Step 2 records the real
+# subscriber counts, and channel_snapshots tracks them over time. Once
+# Step 2 has run, check the size spread with:
+#
+#   SELECT n.name,
+#          COUNT(*) FILTER (WHERE c.subscriber_count >= 1000000) AS large,
+#          COUNT(*) FILTER (WHERE c.subscriber_count BETWEEN 100000 AND 999999) AS mid,
+#          COUNT(*) FILTER (WHERE c.subscriber_count <  100000) AS small
+#   FROM channels c JOIN niches n USING (niche_id) GROUP BY 1;
+#
+# If a niche has no small channels, add some — that is where views-per-sub
+# actually varies.
 
 niches:
-  - name: tech_reviews
-    description: Consumer tech reviews and unboxings
-    channels:
-      - "@mkbhd"
-      - "@UnboxTherapy"
-      - "@LinusTechTips"
-      # add 10-25 more, mixing sizes
-
-  - name: coding_education
-    description: Programming tutorials and CS education
-    channels:
-      - "@Fireship"
-      - "@ThePrimeagen"
-      - "@bendhalpern"
-      # add 10-25 more
-
   - name: finance_india
-    description: Personal finance and investing, India-focused
+    description: Personal finance, investing and markets, India-focused
     channels:
+      # large
       - "@LabourLawAdvisor"
       - "@AssetYogi"
-      # add 10-25 more
+      - "@pranjalkamra"
+      - "@CARachanaRanade"
+      - "@warikoo"
+      - "@ETMONEY"
+      # mid
+      - "@akshatzayn"
+      - "@FinanceWithSharan"
+      - "@ShashankUdupa"
+      - "@InvestYadnya"
+      - "@groww"
+      - "@zerodhaonline"
+      - "@NeerajArora"
+      - "@NitinBhatia"
+      - "@marketfeed"
+      - "@SahilBhadviya"
+      # smaller / niche
+      - "@SharemarketAnalysis"
+      - "@TaxGuruji"
+      - "@theupsidechannel"
+      - "@anushkarathod98"
 
-  - name: cooking
-    description: Recipes and cooking technique
+  - name: tech_india
+    description: Consumer tech reviews and unboxings, Indian market
     channels:
-      - "@JoshuaWeissman"
-      - "@ethanchlebowski"
-      # add 10-25 more
+      # large
+      - "@TechnicalGuruji"
+      - "@TrakinTech"
+      - "@TechBurner"
+      - "@GeekyRanjit"
+      - "@TechnicalSagarIndia"
+      # mid
+      - "@BeebomCo"
+      - "@C4ETech"
+      - "@GadgetsToUse"
+      - "@TechnoRuhez"
+      - "@MySmartPrice"
+      - "@91mobiles"
+      - "@TechWiser"
+      - "@IntellectualIndies"
+      - "@ShlokSrivastav"
+      - "@Techbar"
+      # smaller / niche
+      - "@TheTechnoBoy"
+      - "@Tech2Reviews"
+      - "@TechnicalDost"
+      - "@TechnicalYogi"
+      - "@TechnicalAnirudh"
+      - "@SharmajiTechnical"
+
+  - name: education_india
+    description: Programming, CS and exam-prep education by Indian creators
+    channels:
+      # large
+      - "@CodeWithHarry"
+      - "@apnacollegeofficial"
+      - "@PhysicsWallah"
+      - "@Telusko"
+      - "@GateSmashers"
+      # mid
+      - "@takeUforward"
+      - "@KunalKushwaha"
+      - "@HiteshCodeLab"
+      - "@AnujBhaiya"
+      - "@LoveBabbar"
+      - "@JennyslecturesCSIT"
+      - "@CodingNinjasIndia"
+      - "@GeeksforGeeksVideos"
+      - "@collegewallah"
+      # smaller / niche
+      - "@striver_79"
+      - "@SagarCodes"
+
+  - name: food_india
+    description: Indian recipes and cooking technique
+    channels:
+      # large
+      - "@NishaMadhulika"
+      - "@KabitasKitchen"
+      - "@HebbarsKitchen"
+      - "@SanjeevKapoorKhazana"
+      - "@RanveerBrar"
+      - "@VillageCookingChannel"
+      # mid
+      - "@YourFoodLab"
+      - "@KunalKapur"
+      - "@CookWithParul"
+      - "@GetCurried"
+      - "@RajshriFood"
+      - "@SpiceEats"
+      - "@ChefAjayChopra"
+      - "@CookingShookingHindi"
+      # smaller / niche
+      - "@MintsRecipes"
+      - "@ChefHarpalSingh"
+      - "@SpiceBangla"

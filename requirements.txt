@@ -8,6 +8,7 @@ SQLAlchemy==2.0.32
 # --- Config / resilience ---
 python-dotenv==1.0.1
 tenacity==9.0.0
+PyYAML==6.0.3
 
 # --- Data analysis ---
 pandas==2.2.2
