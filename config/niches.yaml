@@ -11,6 +11,22 @@
 # subscriber" has no variance to explain and every correlation collapses.
 # The small channels are where the interesting signal lives.
 #
+# HANDLES vs CHANNEL IDs — read this before adding anyone
+# -------------------------------------------------------
+# Both work, but @handles are NOT reliable identifiers. The handle namespace
+# is heavily squatted: @marketfeed resolved to an unrelated 7-subscriber
+# channel called "DDanimations", and @hebbarskitchen to a 93-subscriber
+# impostor of the real 8M-subscriber channel. A handle resolving 200 in a
+# browser only proves *something* is there, not that it is who you meant.
+#
+# This is not a cosmetic problem. The headline metric is views/subscriber,
+# so a 1-subscriber impostor becomes a divide-by-one and produces
+# astronomical garbage that would dominate every aggregate in the project.
+#
+# Channels below are pinned to UC... IDs wherever the handle was wrong or
+# ambiguous. When adding a channel, confirm the subscriber count Step 2
+# reports matches the creator you intended, and pin the ID if it does not.
+#
 # SAMPLING NOTE (say this before an interviewer says it to you)
 # ------------------------------------------------------------
 # This is a PURPOSIVE sample of Indian-market creators, not a random one.
@@ -18,110 +34,112 @@
 # chosen because Indian creators are less studied than US ones, which makes
 # the project's market story concrete.
 #
-# Every handle below was checked to resolve to a live channel before being
-# added. Sizes are approximate and drift — Step 2 records the real
-# subscriber counts, and channel_snapshots tracks them over time. Once
-# Step 2 has run, check the size spread with:
+# One known non-independence: @takeUforward and @striver_79 are the same
+# person (Raj Vikramaditya). Kept because the channels carry different
+# content, but they are not two independent draws — worth a footnote if
+# education_india results hinge on them.
+#
+# Audit the size spread after Step 2 with:
 #
 #   SELECT n.name,
 #          COUNT(*) FILTER (WHERE c.subscriber_count >= 1000000) AS large,
 #          COUNT(*) FILTER (WHERE c.subscriber_count BETWEEN 100000 AND 999999) AS mid,
 #          COUNT(*) FILTER (WHERE c.subscriber_count <  100000) AS small
 #   FROM channels c JOIN niches n USING (niche_id) GROUP BY 1;
-#
-# If a niche has no small channels, add some — that is where views-per-sub
-# actually varies.
 
 niches:
   - name: finance_india
     description: Personal finance, investing and markets, India-focused
     channels:
-      # large
+      # large (1M+)
       - "@LabourLawAdvisor"
       - "@AssetYogi"
       - "@pranjalkamra"
       - "@CARachanaRanade"
       - "@warikoo"
       - "@ETMONEY"
-      # mid
       - "@akshatzayn"
       - "@FinanceWithSharan"
-      - "@ShashankUdupa"
+      # mid (100k-1M)
+      - "UCdUEJABvX8XKu3HyDSczqhA"   # Shashank Udupa (@shashankudupa is an impostor)
+      - "UCmapkf4A5883lT90j86WXFg"   # marketfeed    (@marketfeed is "DDanimations")
       - "@InvestYadnya"
       - "@groww"
       - "@zerodhaonline"
       - "@NeerajArora"
       - "@NitinBhatia"
-      - "@marketfeed"
       - "@SahilBhadviya"
-      # smaller / niche
       - "@SharemarketAnalysis"
       - "@TaxGuruji"
-      - "@theupsidechannel"
+      - "UCzw35O6toJtjqEAAt4LTjKQ"   # Trade Brains
       - "@anushkarathod98"
+      # small (10k-100k)
+      - "UCABOnJBVNC4hZIN3q70lw_g"   # Ganesh Sharma
 
   - name: tech_india
     description: Consumer tech reviews and unboxings, Indian market
     channels:
-      # large
+      # large (1M+)
       - "@TechnicalGuruji"
       - "@TrakinTech"
       - "@TechBurner"
       - "@GeekyRanjit"
       - "@TechnicalSagarIndia"
-      # mid
       - "@BeebomCo"
       - "@C4ETech"
       - "@GadgetsToUse"
       - "@TechnoRuhez"
+      - "@IntellectualIndies"
+      # mid (100k-1M)
       - "@MySmartPrice"
       - "@91mobiles"
       - "@TechWiser"
-      - "@IntellectualIndies"
-      - "@ShlokSrivastav"
       - "@Techbar"
-      # smaller / niche
-      - "@TheTechnoBoy"
-      - "@Tech2Reviews"
       - "@TechnicalDost"
       - "@TechnicalYogi"
-      - "@TechnicalAnirudh"
       - "@SharmajiTechnical"
+      - "@TheTechnoBoy"
+      # small (10k-100k)
+      - "UC1F9z9Ud7TfmlB2JcZxfUYg"   # GADGET WORLD
+      - "UCID96NJaRO7O-P07pTsDQjw"   # MobileZon
+      - "UC4BkbXFK5s95VvcUFD9r1pQ"   # Faltutech
+      - "UC1QovbxoCvpJgOxe9uhRThw"   # Gadgets 18
 
   - name: education_india
     description: Programming, CS and exam-prep education by Indian creators
     channels:
-      # large
+      # large (1M+)
       - "@CodeWithHarry"
       - "@apnacollegeofficial"
       - "@PhysicsWallah"
       - "@Telusko"
       - "@GateSmashers"
-      # mid
       - "@takeUforward"
       - "@KunalKushwaha"
       - "@HiteshCodeLab"
       - "@AnujBhaiya"
       - "@LoveBabbar"
       - "@JennyslecturesCSIT"
-      - "@CodingNinjasIndia"
       - "@GeeksforGeeksVideos"
-      - "@collegewallah"
-      # smaller / niche
+      - "UCDrf0V4fcBr5FlCtKwvpfwA"   # College Wallah (@collegewallah is spam)
+      # mid (100k-1M)
+      - "@CodingNinjasIndia"
       - "@striver_79"
-      - "@SagarCodes"
+      - "UCky03MonS3REdCXCvOfua2g"   # Campusmonk
+      # small (10k-100k)
+      - "UCnDOxNor7MQmcuousyB3qqw"   # Sahil Agrawal
+      - "UCyDgpI7q9Hvpki_1NfhGKyg"   # Skills 101
 
   - name: food_india
     description: Indian recipes and cooking technique
     channels:
-      # large
+      # large (1M+)
       - "@NishaMadhulika"
       - "@KabitasKitchen"
-      - "@HebbarsKitchen"
+      - "UCPPIsrNlEkaFQBk-4uNkOaw"   # Hebbars Kitchen (@hebbarskitchen is an impostor)
       - "@SanjeevKapoorKhazana"
       - "@RanveerBrar"
       - "@VillageCookingChannel"
-      # mid
       - "@YourFoodLab"
       - "@KunalKapur"
       - "@CookWithParul"
@@ -130,7 +148,11 @@ niches:
       - "@SpiceEats"
       - "@ChefAjayChopra"
       - "@CookingShookingHindi"
-      # smaller / niche
       - "@MintsRecipes"
       - "@ChefHarpalSingh"
       - "@SpiceBangla"
+      # mid (100k-1M)
+      - "UCaQeYBw2h_MKG36-nasrjUw"   # Swaad Studio
+      # small (10k-100k)
+      - "UCABNHCsdXNWdukSb7cGJ7tg"   # Desi Ghibli Kitchen
+      - "UCoBf95rsXwYB4TLhBNeGD0A"   # Uzma's Kitchen
