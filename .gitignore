@@ -1,0 +1,10 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+data/thumbnails/*.jpg
+data/state/*.json
+logs/*.log
+exports/*.csv
+exports/*.xlsx
+.ipynb_checkpoints/

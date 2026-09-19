@@ -1,0 +1,50 @@
+# Which niches and channels to track.
+#
+# HOW TO PICK CHANNELS
+# --------------------
+# Aim for 15-30 channels per niche, deliberately spread across sizes:
+#   ~5 large   (1M+ subs)
+#   ~10 mid    (100k-1M)
+#   ~10 small  (10k-100k)
+#
+# Why the spread matters: if you only track big channels, "views per
+# subscriber" has no variance to explain and every correlation collapses.
+# The small channels are where the interesting signal lives.
+#
+# Use @handles (easiest to find — it's in the channel URL) or raw channel
+# IDs starting with UC. Both work.
+#
+# Replace these placeholders with real channels in YOUR chosen niches.
+# Indian creator niches are a good choice: less-studied than US ones, and
+# it makes the project's market story concrete.
+
+niches:
+  - name: tech_reviews
+    description: Consumer tech reviews and unboxings
+    channels:
+      - "@mkbhd"
+      - "@UnboxTherapy"
+      - "@LinusTechTips"
+      # add 10-25 more, mixing sizes
+
+  - name: coding_education
+    description: Programming tutorials and CS education
+    channels:
+      - "@Fireship"
+      - "@ThePrimeagen"
+      - "@bendhalpern"
+      # add 10-25 more
+
+  - name: finance_india
+    description: Personal finance and investing, India-focused
+    channels:
+      - "@LabourLawAdvisor"
+      - "@AssetYogi"
+      # add 10-25 more
+
+  - name: cooking
+    description: Recipes and cooking technique
+    channels:
+      - "@JoshuaWeissman"
+      - "@ethanchlebowski"
+      # add 10-25 more

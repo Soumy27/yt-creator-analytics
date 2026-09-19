@@ -1,0 +1,35 @@
+# --- YouTube API ---
+google-api-python-client==2.140.0
+
+# --- Database ---
+psycopg2-binary==2.9.9
+SQLAlchemy==2.0.32
+
+# --- Config / resilience ---
+python-dotenv==1.0.1
+tenacity==9.0.0
+
+# --- Data analysis ---
+pandas==2.2.2
+numpy==1.26.4
+scipy==1.14.1
+statsmodels==0.14.2
+scikit-learn==1.5.1
+
+# --- Visualisation ---
+matplotlib==3.9.2
+seaborn==0.13.2
+
+# --- Thumbnail analysis ---
+Pillow==10.4.0
+opencv-python-headless==4.10.0.84
+pytesseract==0.3.13
+
+# --- Text analysis ---
+vaderSentiment==3.3.2
+
+# --- Export ---
+openpyxl==3.1.5
+
+# --- Notebooks (optional) ---
+jupyterlab==4.2.5
