@@ -154,17 +154,52 @@ def main() -> int:
     ap.add_argument("--all", action="store_true", help="Recompute existing")
     ap.add_argument("--delay", type=float, default=0.15,
                     help="Seconds between downloads (be polite)")
+    ap.add_argument("--order", choices=("random", "recent"), default="random",
+                    help="random (default, unbiased) or recent (newest first)")
+    ap.add_argument("--seed", type=int, default=42,
+                    help="Seed for --order random, so runs are reproducible")
     args = ap.parse_args()
 
+    # Sample RANDOMLY, not newest-first.
+    #
+    # "ORDER BY published_at DESC LIMIT n" is not a sample of the dataset, it
+    # is the n most recent uploads — which is dominated by whichever channels
+    # publish most often. A 500-row run drew 77 of its rows (15%) from a single
+    # high-frequency channel and 35% from five channels, out of 79. Every
+    # thumbnail correlation it produced was really that handful of channels'
+    # house style: brightness came out rho=+0.30 and "significant", then fell
+    # to +0.04 and non-significant once the sample widened to 3,620 rows.
+    # Contrast flipped sign outright.
+    #
+    # verify_step7 warns about this exact failure — "few channels = channel
+    # effects masquerade as content effects" — so the sampling must not
+    # manufacture the concentration the verifier is watching for.
+    #
+    # setseed() makes the shuffle reproducible: the same --seed re-draws the
+    # same sample, so a finding can be checked later against the same rows.
+    order_by = "RANDOM()" if args.order == "random" else "v.published_at DESC"
     sql = ("SELECT v.video_id, v.thumbnail_url FROM videos v "
            "{join} WHERE v.thumbnail_url IS NOT NULL {extra} "
-           "ORDER BY v.published_at DESC LIMIT %s")
+           "ORDER BY {order} LIMIT %s")
     sql = sql.format(
         join="" if args.all else "LEFT JOIN video_thumb_features f USING (video_id)",
         extra="" if args.all else "AND f.video_id IS NULL",
+        order=order_by,
     )
 
-    vids = db.query(sql, (args.limit,))
+    if args.order == "random":
+        # setseed() applies to the CURRENT SESSION ONLY, and db.execute/db.query
+        # each open their own connection — so seeding via db.execute would be
+        # silently discarded and the sample would not be reproducible. Both
+        # statements must share one cursor.
+        log.info("Sampling RANDOMLY (seed=%d) — unbiased across channels", args.seed)
+        with db.cursor(dict_rows=True) as cur:
+            cur.execute("SELECT setseed(%s)", ((args.seed % 1000) / 1000.0,))
+            cur.execute(sql, (args.limit,))
+            vids = [dict(r) for r in cur.fetchall()]
+    else:
+        log.info("Sampling NEWEST-FIRST — biased toward high-frequency channels")
+        vids = db.query(sql, (args.limit,))
     if not vids:
         log.info("Nothing to process.")
         return 0

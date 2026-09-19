@@ -121,12 +121,55 @@ def a1_binary_features(df: pd.DataFrame, findings: list) -> None:
         print(f"  {feat:<18} n={len(a):>5}/{len(b):<5} "
               f"{ratio:>5.2f}x {direction:<6} {fmt_p(p, n_tests)}")
 
+        # AGE CONTROL — is this effect real, or just "these videos are older"?
+        #
+        # Views accumulate over time (age_days vs views_per_sub: rho=+0.15,
+        # p=3e-98), and title habits are not evenly spread across time. Videos
+        # with a question in the title are a median 76 days YOUNGER than those
+        # without, so a pooled test partly measures age, not the question mark.
+        #
+        # Re-testing within age strata exposes that. has_question pools to
+        # 0.88x "fewer views", but by stratum runs 0.91 / 0.72 / 0.83 / 0.95 /
+        # 1.01 / 2.10 — it REVERSES in the oldest bucket. That is Simpson's
+        # paradox, and the pooled figure is an artifact. has_exclamation by
+        # contrast holds at 1.65x-2.62x in every stratum, so it is real.
+        #
+        # A finding is only recorded as robust if it keeps the same direction
+        # in every stratum with enough data.
+        strat = sub.dropna(subset=["age_days", "log_vps"]).copy()
+        robust, ratios = None, []
+        if len(strat) >= MIN_SAMPLE * 6:
+            try:
+                strat["_bucket"] = pd.qcut(strat["age_days"], 6, labels=False, duplicates="drop")
+                for bkt in sorted(strat["_bucket"].dropna().unique()):
+                    s = strat[strat["_bucket"] == bkt]
+                    sa = s[s[feat] == True]["log_vps"].dropna()
+                    sb = s[s[feat] == False]["log_vps"].dropna()
+                    if len(sa) < MIN_SAMPLE or len(sb) < MIN_SAMPLE:
+                        continue
+                    ratios.append(10 ** (sa.median() - sb.median()))
+                if len(ratios) >= 3:
+                    # same side of 1.0 in every stratum = direction is stable
+                    robust = all(r > 1 for r in ratios) or all(r < 1 for r in ratios)
+            except ValueError:
+                pass
+
+        if ratios:
+            flag = "robust to age" if robust else "NOT ROBUST — reverses by age"
+            print(f"  {'':<18} strata {min(ratios):.2f}x-{max(ratios):.2f}x  [{flag}]")
+
         if p < ALPHA / n_tests:
-            findings.append({
-                "analysis": "title_features", "feature": feat,
-                "effect_ratio": round(float(ratio), 3), "p_value": float(p),
-                "n_with": int(len(a)), "n_without": int(len(b)),
-            })
+            if robust is False:
+                print(f"  {'':<18} -> withheld from findings.json (age artifact)")
+            else:
+                findings.append({
+                    "analysis": "title_features", "feature": feat,
+                    "effect_ratio": round(float(ratio), 3), "p_value": float(p),
+                    "n_with": int(len(a)), "n_without": int(len(b)),
+                    "age_robust": bool(robust) if robust is not None else None,
+                    "strata_ratio_min": round(float(min(ratios)), 3) if ratios else None,
+                    "strata_ratio_max": round(float(max(ratios)), 3) if ratios else None,
+                })
 
 
 def a2_continuous(df: pd.DataFrame, findings: list) -> None:
