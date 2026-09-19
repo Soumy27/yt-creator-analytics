@@ -64,9 +64,16 @@ def main() -> int:
     print("\nData quality:")
     bad_dur = db.scalar(
         "SELECT COUNT(*) FROM videos WHERE duration_seconds IS NOT NULL "
-        "AND (duration_seconds < 0 OR duration_seconds > 86400)"
+        "AND (duration_seconds < 0 OR duration_seconds > 604800)"
     )
-    check("durations plausible", bad_dur == 0, f"({bad_dur} outside 0–24h)")
+    # Ceiling is 7 days, not 24h. This check exists to catch parse bugs — a
+    # negative value, or a mishandled ISO-8601 day component turning PT5M into
+    # something enormous. It is NOT a claim about how long videos can be.
+    # Education channels genuinely publish multi-day "complete course"
+    # compilations: Telusko has a 62.9h upload that the API returns as
+    # P2DT14H55M8S. Those are real data, and excluding them would be
+    # discarding the long tail of a duration analysis rather than validating it.
+    check("durations plausible", bad_dur == 0, f"({bad_dur} outside 0–7d)")
 
     future = db.scalar("SELECT COUNT(*) FROM videos WHERE published_at > NOW() + INTERVAL '1 day'")
     check("no future publish dates", future == 0, f"({future})")
