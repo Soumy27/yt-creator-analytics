@@ -1,97 +1,90 @@
 {
-  "n_videos": 20539,
-  "n_channels": 79,
+  "n_videos": 23913,
+  "n_channels": 93,
   "significant_findings": [
     {
       "analysis": "title_features",
       "feature": "has_number",
-      "effect_ratio": 1.433,
-      "p_value": 2.455683014886299e-37,
-      "n_with": 10241,
-      "n_without": 10298,
+      "effect_ratio": 1.303,
+      "p_value": 1.996904803661125e-26,
+      "n_with": 11620,
+      "n_without": 12293,
       "age_robust": true,
-      "strata_ratio_min": 1.311,
-      "strata_ratio_max": 1.498
+      "strata_ratio_min": 1.095,
+      "strata_ratio_max": 1.398
     },
     {
       "analysis": "title_features",
       "feature": "has_exclamation",
-      "effect_ratio": 2.175,
-      "p_value": 4.8816723636043956e-111,
-      "n_with": 3610,
-      "n_without": 16929,
+      "effect_ratio": 1.826,
+      "p_value": 4.25804407733672e-68,
+      "n_with": 3939,
+      "n_without": 19974,
       "age_robust": true,
-      "strata_ratio_min": 1.65,
-      "strata_ratio_max": 2.621
+      "strata_ratio_min": 1.517,
+      "strata_ratio_max": 2.32
     },
     {
       "analysis": "title_features",
       "feature": "has_brackets",
-      "effect_ratio": 1.54,
-      "p_value": 2.6907484499015184e-20,
-      "n_with": 1052,
-      "n_without": 19487,
+      "effect_ratio": 1.358,
+      "p_value": 5.0804467905340355e-12,
+      "n_with": 1104,
+      "n_without": 22809,
       "age_robust": true,
-      "strata_ratio_min": 1.101,
-      "strata_ratio_max": 2.084
-    },
-    {
-      "analysis": "continuous",
-      "feature": "caps_ratio",
-      "spearman_rho": 0.1131,
-      "p_value": 1.8742059810458122e-59,
-      "n": 20539
+      "strata_ratio_min": 1.02,
+      "strata_ratio_max": 1.787
     },
     {
       "analysis": "continuous",
       "feature": "face_count",
-      "spearman_rho": 0.1043,
-      "p_value": 3.148983964824682e-10,
+      "spearman_rho": 0.1047,
+      "p_value": 2.663508739327224e-10,
       "n": 3620
     },
     {
       "analysis": "timing_dow",
-      "p_value": 9.426961296806744e-09
+      "p_value": 1.169344638511317e-10
     },
     {
       "analysis": "saturation",
       "niche": "education_india",
-      "monthly_pct_change": -2.52,
+      "monthly_pct_change": -2.39,
       "trend": "SATURATING",
-      "p_value": 0.16564134604461966
+      "p_value": 0.1637176877293963
     },
     {
       "analysis": "saturation",
       "niche": "finance_india",
       "monthly_pct_change": -1.82,
       "trend": "FLAT",
-      "p_value": 0.22526369505463054
+      "p_value": 0.20786203444489176
     },
     {
       "analysis": "saturation",
       "niche": "food_india",
-      "monthly_pct_change": -6.72,
+      "monthly_pct_change": -8.01,
       "trend": "SATURATING",
-      "p_value": 1.4810707836401835e-07
+      "p_value": 2.171058594632138e-08
     },
     {
       "analysis": "saturation",
       "niche": "tech_india",
-      "monthly_pct_change": 1.09,
+      "monthly_pct_change": 1.06,
       "trend": "FLAT",
-      "p_value": 0.31128131485141636
+      "p_value": 0.32243139329984327
     },
     {
       "analysis": "engagement",
       "feature": "like_rate",
-      "spearman_rho": -0.144,
-      "p_value": 4.0942199523991547e-94
+      "spearman_rho": -0.1365,
+      "p_value": 1.3317101295268185e-97
     },
     {
       "analysis": "engagement",
       "feature": "comment_rate",
-      "spearman_rho": -0.179,
-      "p_value": 3.480364301801576e-145
+      "spearman_rho": -0.1593,
+      "p_value": 1.2643833762457787e-132
     }
   ]
 }

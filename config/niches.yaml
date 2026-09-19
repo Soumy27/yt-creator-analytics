@@ -75,6 +75,8 @@ niches:
       - "@anushkarathod98"
       # small (10k-100k)
       - "UCABOnJBVNC4hZIN3q70lw_g"   # Ganesh Sharma
+      - "UCTig4hXNxNbecISiFw59FVQ"   # Krishan Sharma (63k)
+      - "UCANPkalHUG1oA-8fNIaDxQg"   # Sana Securities (45k)
 
   - name: tech_india
     description: Consumer tech reviews and unboxings, Indian market
@@ -102,6 +104,7 @@ niches:
       - "UC1F9z9Ud7TfmlB2JcZxfUYg"   # GADGET WORLD
       - "UCID96NJaRO7O-P07pTsDQjw"   # MobileZon
       - "UC1QovbxoCvpJgOxe9uhRThw"   # Gadgets 18
+      - "UCvlwQEP-g87E0CxTkxLQ46g"   # Baba Tech Review (89k)
 
   - name: education_india
     description: Programming, CS and exam-prep education by Indian creators
@@ -127,6 +130,10 @@ niches:
       # small (10k-100k)
       - "UCnDOxNor7MQmcuousyB3qqw"   # Sahil Agrawal
       - "UCyDgpI7q9Hvpki_1NfhGKyg"   # Skills 101
+      - "UCTVGjydBHM2g5_K18MZqE4Q"   # Programming in Python (22k)
+      - "UC1atIewgI5QqKqIpUMjLYrw"   # Amit Coding Classes (44k)
+      - "UCSHDMn0cObDyMhnO5o2UNnQ"   # GATE CSE Lectures by Amit Khurana (92k)
+      - "UCkOaW747107QQNo-o0yhJGg"   # GO Classes for GATE DA (49k)
 
   - name: food_india
     description: Indian recipes and cooking technique
@@ -154,3 +161,10 @@ niches:
       # small (10k-100k)
       - "UCABNHCsdXNWdukSb7cGJ7tg"   # Desi Ghibli Kitchen
       - "UCoBf95rsXwYB4TLhBNeGD0A"   # Uzma's Kitchen
+      - "UCkb9LkGxekm_FV_f4D9y2_A"   # Miniature Indian Kitchen (58k)
+      - "UCbM0BXjfhgPKxQdBxdKNMTg"   # Pews Cooking Channel (61k)
+      - "UC3jIZseHiVViw56d9R9ycnw"   # South Indian Cooking with Ammu (41k)
+      - "UChGe8vW5UvFmw8-6f7J2fUg"   # Punjabi Cooking and Punjabi Culture (90k)
+      - "UCxjJa2sJQoLlIE9fFStklHQ"   # Punjabi Lifestyle Cooking (31k)
+      - "UCFGvjqDjgrircHVJ_woi9uw"   # Village Cooking Punjab (28k)
+      - "UCao4-xUhqmKGjzvLk5Hub0w"   # Beenas Kitchen (26k)
