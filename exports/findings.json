@@ -1,0 +1,124 @@
+{
+  "n_videos": 20539,
+  "n_channels": 79,
+  "significant_findings": [
+    {
+      "analysis": "title_features",
+      "feature": "has_number",
+      "effect_ratio": 1.433,
+      "p_value": 2.455683014886299e-37,
+      "n_with": 10241,
+      "n_without": 10298
+    },
+    {
+      "analysis": "title_features",
+      "feature": "has_question",
+      "effect_ratio": 0.878,
+      "p_value": 8.531328871550978e-05,
+      "n_with": 3754,
+      "n_without": 16785
+    },
+    {
+      "analysis": "title_features",
+      "feature": "has_exclamation",
+      "effect_ratio": 2.175,
+      "p_value": 4.8816723636043956e-111,
+      "n_with": 3610,
+      "n_without": 16929
+    },
+    {
+      "analysis": "title_features",
+      "feature": "has_brackets",
+      "effect_ratio": 1.54,
+      "p_value": 2.6907484499015184e-20,
+      "n_with": 1052,
+      "n_without": 19487
+    },
+    {
+      "analysis": "continuous",
+      "feature": "brightness",
+      "spearman_rho": 0.3005,
+      "p_value": 1.0995032176527952e-09,
+      "n": 395
+    },
+    {
+      "analysis": "continuous",
+      "feature": "face_count",
+      "spearman_rho": 0.2199,
+      "p_value": 1.0272762050730892e-05,
+      "n": 395
+    },
+    {
+      "analysis": "continuous",
+      "feature": "contrast",
+      "spearman_rho": 0.1731,
+      "p_value": 0.0005472773705890753,
+      "n": 395
+    },
+    {
+      "analysis": "continuous",
+      "feature": "colourfulness",
+      "spearman_rho": 0.1698,
+      "p_value": 0.0007003594054579291,
+      "n": 395
+    },
+    {
+      "analysis": "continuous",
+      "feature": "edge_density",
+      "spearman_rho": 0.1641,
+      "p_value": 0.00106394546594701,
+      "n": 395
+    },
+    {
+      "analysis": "continuous",
+      "feature": "caps_ratio",
+      "spearman_rho": 0.1131,
+      "p_value": 1.8742059810458122e-59,
+      "n": 20539
+    },
+    {
+      "analysis": "timing_dow",
+      "p_value": 9.426961296806744e-09
+    },
+    {
+      "analysis": "saturation",
+      "niche": "education_india",
+      "monthly_pct_change": -2.52,
+      "trend": "SATURATING",
+      "p_value": 0.16564134604461966
+    },
+    {
+      "analysis": "saturation",
+      "niche": "finance_india",
+      "monthly_pct_change": -1.82,
+      "trend": "FLAT",
+      "p_value": 0.22526369505463054
+    },
+    {
+      "analysis": "saturation",
+      "niche": "food_india",
+      "monthly_pct_change": -6.72,
+      "trend": "SATURATING",
+      "p_value": 1.4810707836401835e-07
+    },
+    {
+      "analysis": "saturation",
+      "niche": "tech_india",
+      "monthly_pct_change": 1.09,
+      "trend": "FLAT",
+      "p_value": 0.31128131485141636
+    },
+    {
+      "analysis": "engagement",
+      "feature": "like_rate",
+      "spearman_rho": -0.144,
+      "p_value": 4.0942199523991547e-94
+    },
+    {
+      "analysis": "engagement",
+      "feature": "comment_rate",
+      "spearman_rho": -0.179,
+      "p_value": 3.480364301801576e-145
+    }
+  ]
+}

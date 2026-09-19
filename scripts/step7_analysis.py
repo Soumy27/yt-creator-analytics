@@ -223,14 +223,47 @@ def a4_velocity(df: pd.DataFrame, findings: list) -> None:
     print("=" * 68)
     print("  The distinctive analysis. Requires accumulated snapshots.\n")
 
+    # The 'latest' reading must be meaningfully LATER than the 24h one, or
+    # this test correlates a measurement with itself.
+    #
+    # A sample-size check alone is not enough. On day one of collection every
+    # snapshot sits in the same narrow time window, so the LATERAL join in
+    # v_video_velocity picks the SAME row for both views_24h and views_latest.
+    # The test then reports rho=1.00, R2=1.00, slope=1.00 — a perfect
+    # correlation that is pure artifact, and the most impressive-looking
+    # number in the whole run. frac_views_first_24h > 1.0 is the tell: a
+    # share of final views cannot exceed 100%.
+    #
+    # MIN_LATEST_AGE_H requires the newest reading to be at least a week old,
+    # so there is genuine growth between the two points.
+    MIN_LATEST_AGE_H = 168  # 7 days
+
     vel = pd.read_sql(
         "SELECT * FROM v_video_velocity WHERE is_short IS NOT TRUE "
-        "AND views_24h IS NOT NULL AND views_latest IS NOT NULL",
+        "AND views_24h IS NOT NULL AND views_latest IS NOT NULL "
+        f"AND latest_age_hours >= {MIN_LATEST_AGE_H}",
         db_url(),
     )
-    if len(vel) < MIN_SAMPLE:
-        print(f"  NOT ENOUGH DATA: {len(vel)} videos have both a 24h reading")
-        print(f"  and a later one (need {MIN_SAMPLE}).")
+    # Guard against the degenerate case surviving the age filter.
+    degenerate = int((vel["views_24h"] == vel["views_latest"]).sum()) if len(vel) else 0
+
+    if len(vel) < MIN_SAMPLE or degenerate > len(vel) * 0.5:
+        # Report on the UNFILTERED set, so the diagnostic explains what was
+        # excluded rather than describing the empty result of the exclusion.
+        allrows = pd.read_sql(
+            "SELECT views_24h, views_latest FROM v_video_velocity "
+            "WHERE is_short IS NOT TRUE "
+            "AND views_24h IS NOT NULL AND views_latest IS NOT NULL",
+            db_url(),
+        )
+        have_any = len(allrows)
+        same = int((allrows["views_24h"] == allrows["views_latest"]).sum()) if have_any else 0
+        print(f"  NOT ENOUGH DATA: {len(vel)} videos have a 24h reading AND a")
+        print(f"  latest reading at least {MIN_LATEST_AGE_H}h old (need {MIN_SAMPLE}).")
+        if have_any:
+            print(f"  ({have_any} have both readings, but they are too close together")
+            print(f"   in time to measure growth — {same} are byte-identical, which")
+            print(f"   would report a perfect correlation of a number with itself.)")
         print("\n  This is not a bug. It needs elapsed time: videos must be")
         print("  published WHILE your collector is running, then age past 24h.")
         print("  Keep the cron going and re-run this in a week or two.")

@@ -104,13 +104,25 @@ def main() -> int:
         check("findings.json exists", False, "(run step7)")
 
     print("\nVelocity readiness:")
+    # Must mirror the guard in step7_analysis.a4_velocity: a row only counts
+    # if the latest reading is genuinely LATER than the 24h one. Counting rows
+    # alone reports "ready" on day one, when both readings are the same
+    # snapshot and the test would return a meaningless rho=1.00.
     vel = db.query_one(
+        "SELECT COUNT(*) AS n FROM v_video_velocity "
+        "WHERE views_24h IS NOT NULL AND views_latest IS NOT NULL "
+        "AND is_short IS NOT TRUE AND latest_age_hours >= 168"
+    )
+    nvel = (vel or {}).get("n", 0) or 0
+    raw = db.query_one(
         "SELECT COUNT(*) AS n FROM v_video_velocity "
         "WHERE views_24h IS NOT NULL AND views_latest IS NOT NULL "
         "AND is_short IS NOT TRUE"
     )
-    nvel = (vel or {}).get("n", 0) or 0
-    print(f"       {nvel} videos have both a 24h and a later reading")
+    nraw = (raw or {}).get("n", 0) or 0
+    print(f"       {nvel} videos have a 24h reading and a latest reading >=168h old")
+    if nraw > nvel:
+        print(f"       ({nraw} have both readings, but the rest are too close in time)")
     if nvel < MIN_SAMPLE:
         days = db.scalar("SELECT COUNT(DISTINCT DATE(captured_at)) FROM video_snapshots")
         print(f"       Only {days} days of snapshots so far.")
