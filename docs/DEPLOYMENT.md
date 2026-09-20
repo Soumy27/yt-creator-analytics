@@ -20,17 +20,25 @@ Everything below fits inside free tiers.
 I cannot create accounts or sign in on your behalf. These four steps are yours;
 everything they depend on is already committed.
 
-### 1. A hosted Postgres — [Neon](https://neon.tech) or [Supabase](https://supabase.com)
+### 1. A hosted Postgres — ~~done~~
 
-Either free tier is ample: this dataset is well under 1 GB.
+Neon project **`yt_analyzer`** (`wispy-wildflower-64347736`, branch `production`,
+ap-southeast-1, Postgres 18) is linked to this directory, and the existing
+dataset has been migrated into it — 93 channels, 31,975 videos and, crucially,
+the full snapshot history, which is the one part that could not have been
+re-collected.
 
-Create a project, then copy the **connection string**. It looks like:
+`neon link` wrote `DATABASE_URL` into `.env`, and `src/config.py` prefers it over
+the `PG*` settings, so **local commands already talk to Neon, not to localhost**.
+Both `.env` and `.neon` are gitignored.
 
+To read the connection string when you need it for step 3:
+
+```bash
+neon connection-string production
 ```
-postgresql://user:password@ep-something.aws.neon.tech/dbname?sslmode=require
-```
 
-Keep it somewhere safe for step 3. Treat it like a password — it *is* one.
+Treat it like a password — it *is* one.
 
 ### 2. Push this repo to GitHub
 
