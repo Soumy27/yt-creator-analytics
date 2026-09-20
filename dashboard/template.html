@@ -615,33 +615,69 @@ led.querySelectorAll('.sbar').forEach(b=>bind(b,b.dataset.t));
 
 /* ---------- heatmap ---------- */
 (function(){
-  const cw=34,ch=27,L=44,T=22,W=L+24*cw+14,H=T+7*ch+30;
-  const s=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'Median views per subscriber by publish day and hour'},
+  // Layout is row-based below the grid: axis label and colour ramp sit on their
+  // own bands with the ramp's numbers under it, never beside it. The previous
+  // version put the upper value to the right of the ramp, where it overprinted
+  // the last four swatches by 26px.
+  const cw=33,ch=28,L=54,T=32,PAD=16;
+  const gw=24*cw, gh=7*ch;
+  const W=L+gw+PAD, gb=T+gh;          // gb = grid bottom
+  const capY=gb+16, stripY=gb+22, stripH=9, numY=gb+45, H=gb+56;
+  const s=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img',
+    'aria-label':'Median views per subscriber by publish day and hour, UTC'},
     document.getElementById('chartHeat'));
-  const ok=D.heat.filter(r=>r.n>=20),vals=ok.map(r=>r.med);
-  const lo=Math.min(...vals),hi=Math.max(...vals);
+
+  const ok=D.heat.filter(r=>r.n>=20), vals=ok.map(r=>r.med);
+  const lo=Math.min(...vals), hi=Math.max(...vals);
   const map={}; D.heat.forEach(r=>map[r.dow+'_'+r.h]=r);
-  for(let h=0;h<24;h+=3)el('text',{x:L+h*cw+cw/2,y:T-7,class:'axis','text-anchor':'middle'},s)
-    .textContent=String(h).padStart(2,'0');
+  const best=ok.length?ok.reduce((a,b)=>b.med>a.med?b:a):null;
+  const sparse=D.heat.length-ok.length;
+
+  // hour ruler: a tick every 3h, so a column can be traced back to a time
+  for(let h=0;h<=24;h+=3){
+    const x=L+h*cw;
+    el('line',{x1:x,x2:x,y1:T-6,y2:T-2,stroke:'var(--rule)','stroke-width':1},s);
+    if(h<24)el('text',{x:x+cw/2,y:T-10,class:'axis','text-anchor':'middle'},s)
+      .textContent=String(h).padStart(2,'0')+':00';
+  }
+
   for(let d=0;d<7;d++){
-    el('text',{x:L-8,y:T+d*ch+ch/2+3.5,class:'axis','text-anchor':'end'},s).textContent=DOW[d];
+    el('text',{x:L-10,y:T+d*ch+ch/2+3.5,class:'axis','text-anchor':'end'},s).textContent=DOW[d];
     for(let h=0;h<24;h++){
-      const r=map[d+'_'+h],x=L+h*cw,y=T+d*ch;
+      const r=map[d+'_'+h], x=L+h*cw, y=T+d*ch;
       const good=r&&r.n>=20;
-      const t=good?(r.med-lo)/(hi-lo||1):0;
-      const rect=el('rect',{x:x+1,y:y+1,width:cw-1,height:ch-1,rx:0,
-        fill:good?'var(--ramp)':'var(--leaf-2)','fill-opacity':good?(0.14+t*0.86).toFixed(3):1},s);
+      const k=good?(r.med-lo)/(hi-lo||1):0;
+      const rect=el('rect',{x:x+1,y:y+1,width:cw-2,height:ch-2,
+        fill:good?'var(--ramp)':'var(--leaf-2)',
+        'fill-opacity':good?(0.12+k*0.88).toFixed(3):1},s);
       if(r)bind(rect,`<b>${DOW[d]} ${String(h).padStart(2,'0')}:00 UTC</b><br>`+
         (good?`median ${r.med.toFixed(4)} views/sub<br>${num(r.n)} videos`
-             :`only ${num(r.n)} videos — too few to read`));
+             :`only ${num(r.n)} video${r.n===1?'':'s'} — too few to read`));
+      // gild the strongest cell, the same signal the publish-day chart uses
+      if(good&&best&&r.dow===best.dow&&r.h===best.h)
+        el('rect',{x:x+1,y:y+1,width:cw-2,height:ch-2,fill:'none',
+          stroke:'var(--gild)','stroke-width':2},s);
     }
   }
-  el('text',{x:L,y:H-8,class:'axlab'},s).textContent='publish hour (UTC)';
-  const gx=W-186;
-  el('text',{x:gx-8,y:H-4,class:'axis','text-anchor':'end'},s).textContent=lo.toFixed(3);
-  for(let i=0;i<22;i++)el('rect',{x:gx+i*7,y:H-16,width:7,height:9,fill:'var(--ramp)',
-    'fill-opacity':(0.14+(i/21)*0.86).toFixed(3)},s);
-  el('text',{x:gx+158,y:H-4,class:'axis','text-anchor':'end'},s).textContent=hi.toFixed(3);
+  el('rect',{x:L,y:T,width:gw,height:gh,fill:'none',stroke:'var(--rule)','stroke-width':1},s);
+
+  el('text',{x:L,y:capY+6,class:'axlab'},s).textContent='publish hour (UTC)';
+  if(best)el('text',{x:L,y:numY,class:'axis',fill:'var(--gild)'},s)
+    .textContent=`strongest: ${DOW[best.dow]} ${String(best.h).padStart(2,'0')}:00 · ${num(best.n)} videos`;
+
+  // colour ramp, right-aligned, with its numbers on the row beneath it
+  const stripW=140, sx=W-stripW;
+  el('text',{x:W,y:capY,class:'axlab','text-anchor':'end'},s).textContent='median views/sub';
+  const STEPS=20;
+  for(let i=0;i<STEPS;i++)
+    el('rect',{x:sx+i*(stripW/STEPS),y:stripY,width:stripW/STEPS+0.5,height:stripH,
+      fill:'var(--ramp)','fill-opacity':(0.12+(i/(STEPS-1))*0.88).toFixed(3)},s);
+  el('rect',{x:sx,y:stripY,width:stripW,height:stripH,fill:'none',
+    stroke:'var(--rule)','stroke-width':1},s);
+  el('text',{x:sx,y:numY,class:'axis'},s).textContent=lo.toFixed(3);
+  el('text',{x:sx+stripW,y:numY,class:'axis','text-anchor':'end'},s).textContent=hi.toFixed(3);
+  if(sparse)el('text',{x:W,y:numY+13,class:'axis','text-anchor':'end',fill:'var(--ink-3)'},s)
+    .textContent=`${sparse} slot${sparse===1?'':'s'} left blank (under 20 videos)`;
 })();
 
 /* ---------- saturation ---------- */
