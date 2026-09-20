@@ -1,0 +1,48 @@
+name: deploy
+
+# Publish the site from whatever is already in the database.
+#
+# Separate from `refresh` on purpose. Rebuilding the page is a two-minute job
+# that reads the database; recollecting data is an hour-long job that downloads
+# thumbnails. Tying them together means a broken or slow collection step also
+# blocks a site fix, which is the wrong failure mode for the public-facing part.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 5 * * *"        # daily 05:00 UTC, so the page never goes stale
+                               # between weekly refreshes
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Pages allows one deployment at a time; queue rather than cancel so a
+# concurrent `refresh` deploy is not lost.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      # Only what the page build needs — no API client, no OpenCV, no OCR.
+      - run: pip install psycopg2-binary pandas numpy SQLAlchemy python-dotenv PyYAML
+      - name: Build site
+        run: python scripts/build_site.py
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deployment
+        uses: actions/deploy-pages@v4
