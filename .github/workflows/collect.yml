@@ -1,0 +1,48 @@
+name: collect
+
+# The snapshot collector. This is the piece that must not stop.
+#
+# The YouTube API returns a video's CURRENT view count and offers no history
+# endpoint, so the time series exists only because the same videos are sampled
+# again and again. A window this job misses is view history that cannot be
+# reconstructed later, by anyone, at any price. Running it here rather than on a
+# laptop is the whole point: GitHub's runners do not go to sleep.
+on:
+  schedule:
+    - cron: "0 */6 * * *"     # every 6 hours, UTC
+  workflow_dispatch:           # and a manual "Run workflow" button
+
+concurrency:
+  group: collect
+  cancel-in-progress: false    # never cut a run short; a partial write is fine,
+                               # a cancelled one loses the window
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -r requirements.txt
+
+      # Idempotent (CREATE TABLE IF NOT EXISTS), so a fresh database
+      # self-initialises rather than failing on first run.
+      - name: Ensure schema
+        run: python scripts/step1_init_db.py
+        env: &dbenv
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          YOUTUBE_API_KEYS_EXTRA: ${{ secrets.YOUTUBE_API_KEYS_EXTRA }}
+          QUOTA_DAILY_BUDGET: "9000"
+
+      - name: Snapshot
+        run: python scripts/step4_snapshot.py
+        env: *dbenv
+
+      - name: Report history
+        run: python verify/verify_step4.py || true
+        env: *dbenv

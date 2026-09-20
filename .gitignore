@@ -9,3 +9,4 @@ exports/*.csv
 exports/*.xlsx
 exports/dashboard.html
 .ipynb_checkpoints/
+site/

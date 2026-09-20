@@ -128,6 +128,24 @@ def collect() -> dict:
     hist, edges = np.histogram(np.log10(v.view_count), bins=22)
     out["loghist"] = {"counts": hist.tolist(), "edges": [round(e, 2) for e in edges]}
 
+    # Momentum — the trending signal. Empty until snapshots span 12h+, which is
+    # correct rather than broken: a growth RATE cannot exist without two
+    # readings far enough apart to measure between.
+    out["momentum"] = [
+        {"t": r["title"][:64], "c": r["channel_title"][:28], "n": r["niche"],
+         "vid": r["video_id"], "g": int(r["views_gained"] or 0),
+         "vph": round(float(r["views_per_hour"] or 0), 1),
+         "mps": round(float(r["momentum_per_sub"] or 0), 8),
+         "now": int(r["views_now"] or 0),
+         "age": round(float(r["age_hours"] or 0)),
+         "subs": int(r["subscriber_count"] or 0)}
+        for r in db.query("""
+            SELECT video_id, title, channel_title, niche, views_gained,
+                   views_per_hour, momentum_per_sub, views_now, age_hours,
+                   subscriber_count, rank_in_niche
+            FROM v_niche_momentum ORDER BY niche, rank_in_niche""")
+    ] if db.table_exists("videos") else []
+
     out["velocity"] = db.query_one("""
         WITH s AS (SELECT MIN(started_at) t0 FROM collection_runs WHERE script LIKE '%step4%')
         SELECT to_char((SELECT t0 FROM s),'Mon DD') started,

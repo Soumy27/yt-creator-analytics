@@ -64,7 +64,18 @@ QUOTA_DAILY_BUDGET = _int("QUOTA_DAILY_BUDGET", 9000)
 
 
 # ---------------------------------------------------------------- database
+# A single DATABASE_URL wins over the individual PG* vars when present.
+#
+# Managed Postgres (Neon, Supabase, Railway) and CI runners hand you one
+# connection string, not five separate settings, and GitHub Actions can only
+# inject it as one secret. Keeping the PG* path as the fallback means a local
+# checkout still works with nothing but .env, exactly as before.
+DATABASE_URL = os.getenv("DATABASE_URL", "").strip() or None
+
+
 def db_dsn() -> str:
+    if DATABASE_URL:
+        return DATABASE_URL  # psycopg2.connect accepts a URL directly
     return (
         f"host={os.getenv('PGHOST', 'localhost')} "
         f"port={os.getenv('PGPORT', '5432')} "
@@ -84,6 +95,16 @@ def db_url() -> str:
     instead. Common on Linux where Postgres defaults to socket connections.
     """
     from urllib.parse import quote_plus
+
+    if DATABASE_URL:
+        # SQLAlchemy needs the +psycopg2 driver marker; managed providers hand
+        # out bare postgres:// or postgresql:// URLs.
+        u = DATABASE_URL
+        if u.startswith("postgres://"):
+            u = "postgresql://" + u[len("postgres://"):]
+        if u.startswith("postgresql://"):
+            u = "postgresql+psycopg2://" + u[len("postgresql://"):]
+        return u
 
     user = quote_plus(_require("PGUSER"))
     pwd = quote_plus(_require("PGPASSWORD"))

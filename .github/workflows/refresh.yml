@@ -1,0 +1,79 @@
+name: refresh
+
+# Weekly: pick up newly published videos, recompute features and the analysis,
+# rebuild the public site and deploy it.
+#
+# Deliberately separate from `collect`. Collection is small, frequent and must
+# never be blocked by a slow thumbnail download or a failing analysis step.
+on:
+  schedule:
+    - cron: "30 3 * * 1"      # Mondays 03:30 UTC (~09:00 IST)
+  workflow_dispatch:
+
+concurrency:
+  group: refresh
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env: &dbenv
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+      YOUTUBE_API_KEYS_EXTRA: ${{ secrets.YOUTUBE_API_KEYS_EXTRA }}
+      QUOTA_DAILY_BUDGET: "9000"
+      MAX_VIDEOS_PER_CHANNEL: "500"
+      BACKFILL_SINCE: "2024-01-01"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -r requirements.txt
+
+      # pytesseract is only a wrapper; OCR needs the tesseract binary itself.
+      - name: Install tesseract
+        run: sudo apt-get update && sudo apt-get install -y tesseract-ocr
+
+      - name: Schema + channels
+        run: |
+          python scripts/step1_init_db.py
+          python scripts/step2_seed_channels.py
+
+      - name: New videos
+        run: python scripts/step3_backfill_videos.py
+
+      - name: Snapshot
+        run: python scripts/step4_snapshot.py
+
+      - name: Features
+        run: |
+          python scripts/step5_text_features.py
+          python scripts/step6_thumbnails.py --limit 2000
+
+      - name: Analysis + exports
+        run: |
+          python scripts/step7_analysis.py
+          python scripts/step8_export.py --excel
+
+      # Stored API data must be refreshed or deleted within 30 days under the
+      # YouTube API Services Terms. This drops rows we have stopped refreshing.
+      - name: Retention sweep
+        run: python scripts/retention_sweep.py
+
+      - name: Build site
+        run: python scripts/build_site.py
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deployment
+        uses: actions/deploy-pages@v4

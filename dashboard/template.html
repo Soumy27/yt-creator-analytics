@@ -106,6 +106,18 @@ section{margin-bottom:46px}
 .slabel{font-family:var(--figure);font-size:10px;color:var(--ink-3);white-space:nowrap;
   letter-spacing:.04em;margin-top:5px;display:block}
 
+.mlist{list-style:none;margin:0;padding:0;counter-reset:mr}
+.mrow{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:baseline;
+  padding:10px 0;border-top:1px solid var(--rule-soft)}
+.mrow:first-child{border-top:0}
+.mrank{font-family:var(--figure);font-size:11px;color:var(--tinct);font-weight:600;width:14px}
+.mtitle{font-size:14px;line-height:1.35}
+.mtitle small{display:block;font-family:var(--figure);font-size:10px;color:var(--ink-3);
+  margin-top:3px;letter-spacing:.03em}
+.mval{font-family:var(--figure);font-variant-numeric:tabular-nums;font-size:15px;
+  font-weight:500;text-align:right;white-space:nowrap}
+.mval small{display:block;font-size:9px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-3);font-weight:400;margin-top:2px}
 /* ── plates (charts) ── */
 .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:26px}
 .plate{background:var(--leaf);border:1px solid var(--rule);padding:18px 18px 14px}
@@ -191,6 +203,18 @@ button.tog:focus-visible{outline:2px solid var(--gild);outline-offset:2px}
 </header>
 
 <div class="kpis" id="kpis"></div>
+
+<section>
+  <div class="shead">
+    <h2>Rising now</h2>
+    <span class="eyebrow">view growth, last 12h+</span>
+  </div>
+  <p class="note">Ranked by <b>views gained per hour, per subscriber</b> &mdash; so a 26k channel
+     can out-rank a 30M one. Ranking by raw speed would only ever re-list the biggest channels.
+     This is measured from repeated sampling of the same videos; it is not YouTube's public
+     Trending tab, and it cannot be looked up anywhere.</p>
+  <div id="momentum"></div>
+</section>
 
 <section>
   <div class="shead">
@@ -348,6 +372,38 @@ document.getElementById('shortsN').textContent=num(k.vids-k.longform);
 document.getElementById('footStats').textContent=
   `${num(k.longform)} long-form videos analysed · ${D.velocity.days} days of snapshots so far`;
 document.getElementById('stampQuota').textContent=`${num(k.vids)} videos · 0.04 quota units each`;
+
+/* ---------- momentum (trending) ---------- */
+(function(){
+  const box=document.getElementById('momentum');
+  const m=D.momentum||[];
+  if(!m.length){
+    box.innerHTML=`<div class="pending">
+      <div class="eyebrow">not yet available</div>
+      <p class="note" style="margin:10px 0 0">A growth <em>rate</em> needs two readings far enough
+      apart to measure between &mdash; at least 12 hours. The collector samples every 6 hours, so
+      this fills in on its own once a couple of cycles have run. Nothing to fix; it is the same
+      constraint as the velocity analysis below.</p>
+      <p class="note" style="margin:10px 0 0">Snapshots so far: <b>${D.velocity.days}</b> day(s),
+      <b>${D.velocity.hrs}h</b> of collection.</p></div>`;
+    return;
+  }
+  const byNiche={};
+  m.forEach(r=>{(byNiche[r.n]=byNiche[r.n]||[]).push(r);});
+  box.className='grid2';
+  box.innerHTML=NICHE.filter(n=>byNiche[n]).map(n=>{
+    const rows=byNiche[n].slice(0,6).map((r,i)=>`
+      <li class="mrow">
+        <span class="mrank">${i+1}</span>
+        <span class="mtitle">${r.t.replace(/</g,'&lt;')}
+          <small>${r.c.replace(/</g,'&lt;')} &middot; ${num(r.subs)} subs &middot; ${r.age}h old</small></span>
+        <span class="mval">${fmt(Math.round(r.vph))}<small>views/hr</small></span>
+      </li>`).join('');
+    return `<div class="plate"><h3>${NL[n]}</h3>
+      <div class="sub">fastest gaining &middot; ${TINCT[n]}</div>
+      <ol class="mlist" style="--tinct:${SC(n)}">${rows}</ol></div>`;
+  }).join('');
+})();
 
 /* ---------- ledger ---------- */
 const LAB={has_exclamation:['Exclamation mark','“Don’t miss this!”'],
