@@ -12,3 +12,11 @@ exports/dashboard.html
 site/
 .neon
 node_modules/
+
+# local editor / tooling config
+.claude/
+.gemini/
+.cursor/
+.codex/
+.vscode/
+skills-lock.json

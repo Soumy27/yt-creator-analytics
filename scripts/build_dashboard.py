@@ -2,10 +2,10 @@
 """
 Rebuild the dashboard page from the live database.
 
-The published dashboard embeds its data rather than querying anything: the page
-is served from claude.ai while Postgres runs on localhost, and a remote page
-cannot reach a database on this machine. So "refreshing" the dashboard means
-re-running this and re-publishing the artifact.
+The dashboard embeds its data rather than querying anything. The page is served
+as a static file, while Postgres lives elsewhere, and a statically hosted page
+cannot reach a database directly. So "refreshing" the dashboard means re-running
+this and redeploying the output.
 
 Run:    python scripts/build_dashboard.py
 Out:    exports/dashboard.html   (publish this to the artifact URL)

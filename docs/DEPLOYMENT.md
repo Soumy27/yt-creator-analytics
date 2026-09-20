@@ -121,7 +121,7 @@ launchctl unload ~/Library/LaunchAgents/com.soumydhiran.ytanalytics.snapshot.pli
 rm ~/Library/LaunchAgents/com.soumydhiran.ytanalytics.snapshot.plist
 ```
 
-Also delete the weekly **Scheduled** task in the Claude desktop app sidebar — the
+If you also set up a local scheduled refresh outside this repo, remove it — the
 `refresh` workflow replaces it.
 
 To point your local tools at the hosted database, add one line to `.env`; it
