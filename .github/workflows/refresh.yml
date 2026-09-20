@@ -22,7 +22,12 @@ permissions:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    # The first real run took 1h22m, of which the thumbnail step was 72 min
+    # (2,000 downloads at ~2s each). That left 8 minutes of headroom, and the
+    # dataset only grows. Public repositories get unlimited Actions minutes, so
+    # a generous ceiling costs nothing and a breached one costs a whole week's
+    # refresh — the asymmetry says to over-provision here.
+    timeout-minutes: 240
     env: &dbenv
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
