@@ -6,7 +6,7 @@
       "analysis": "title_features",
       "feature": "has_number",
       "effect_ratio": 1.303,
-      "p_value": 1.996904803661125e-26,
+      "p_value": 1.9376754253459178e-26,
       "n_with": 11620,
       "n_without": 12293,
       "age_robust": true,
@@ -17,7 +17,7 @@
       "analysis": "title_features",
       "feature": "has_exclamation",
       "effect_ratio": 1.826,
-      "p_value": 4.25804407733672e-68,
+      "p_value": 4.284369031329403e-68,
       "n_with": 3939,
       "n_without": 19974,
       "age_robust": true,
@@ -28,7 +28,7 @@
       "analysis": "title_features",
       "feature": "has_brackets",
       "effect_ratio": 1.358,
-      "p_value": 5.0804467905340355e-12,
+      "p_value": 5.171804839702609e-12,
       "n_with": 1104,
       "n_without": 22809,
       "age_robust": true,
@@ -36,55 +36,48 @@
       "strata_ratio_max": 1.787
     },
     {
-      "analysis": "continuous",
-      "feature": "face_count",
-      "spearman_rho": 0.1047,
-      "p_value": 2.663508739327224e-10,
-      "n": 3620
-    },
-    {
       "analysis": "timing_dow",
-      "p_value": 1.169344638511317e-10
+      "p_value": 1.1703031988489943e-10
     },
     {
       "analysis": "saturation",
       "niche": "education_india",
       "monthly_pct_change": -2.39,
       "trend": "SATURATING",
-      "p_value": 0.1637176877293963
+      "p_value": 0.16375303339717587
     },
     {
       "analysis": "saturation",
       "niche": "finance_india",
-      "monthly_pct_change": -1.82,
+      "monthly_pct_change": -1.81,
       "trend": "FLAT",
-      "p_value": 0.20786203444489176
+      "p_value": 0.20812820999308873
     },
     {
       "analysis": "saturation",
       "niche": "food_india",
       "monthly_pct_change": -8.01,
       "trend": "SATURATING",
-      "p_value": 2.171058594632138e-08
+      "p_value": 2.1748666656761638e-08
     },
     {
       "analysis": "saturation",
       "niche": "tech_india",
       "monthly_pct_change": 1.06,
       "trend": "FLAT",
-      "p_value": 0.32243139329984327
+      "p_value": 0.3219605030376897
     },
     {
       "analysis": "engagement",
       "feature": "like_rate",
-      "spearman_rho": -0.1365,
-      "p_value": 1.3317101295268185e-97
+      "spearman_rho": -0.1364,
+      "p_value": 1.9603587617929164e-97
     },
     {
       "analysis": "engagement",
       "feature": "comment_rate",
-      "spearman_rho": -0.1593,
-      "p_value": 1.2643833762457787e-132
+      "spearman_rho": -0.1592,
+      "p_value": 2.029660139146315e-132
     }
   ]
 }
