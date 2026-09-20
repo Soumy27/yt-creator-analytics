@@ -128,6 +128,37 @@ def collect() -> dict:
     hist, edges = np.histogram(np.log10(v.view_count), bins=22)
     out["loghist"] = {"counts": hist.tolist(), "edges": [round(e, 2) for e in edges]}
 
+    # Creator guidance. Only the top few per niche are embedded — the view holds
+    # ~2,000 rows and the page needs a shortlist, not a dictionary.
+    kw = {}
+    for kind in ("hashtag", "tag"):
+        for order, key in (("lift_vs_niche DESC", "by_lift"),
+                           ("used_last_7d DESC, n_videos DESC", "by_recent")):
+            for r in db.query(f"""
+                SELECT niche, word, n_videos, n_channels, n_channels_up,
+                       used_last_7d, lift_vs_niche
+                FROM (SELECT *, ROW_NUMBER() OVER (PARTITION BY niche ORDER BY {order}) rn
+                      FROM v_niche_keywords WHERE kind = %s) x
+                WHERE rn <= 6 ORDER BY niche, rn""", (kind,)):
+                kw.setdefault(r["niche"], {}).setdefault(kind, {}).setdefault(key, []).append({
+                    "w": r["word"], "n": int(r["n_videos"]), "ch": int(r["n_channels"]),
+                    "up": int(r["n_channels_up"]), "r7": int(r["used_last_7d"]),
+                    "lift": round(float(r["lift_vs_niche"] or 0), 2)})
+    out["keywords"] = kw
+
+    out["besttime"] = [
+        {"n": r["niche"], "dow": int(r["publish_dow"]), "h": int(r["publish_hour_utc"]),
+         "vids": int(r["n_videos"]), "med": round(float(r["median_views_per_sub"] or 0), 5)}
+        for r in db.query("SELECT * FROM v_niche_best_time WHERE rank_in_niche <= 3 "
+                          "ORDER BY niche, rank_in_niche")]
+
+    out["heat"] = out.get("heat")  # keep the day/hour grid under its own key
+    out["nicheheat"] = [
+        {"n": r["niche"], "moving": int(r["videos_moving"] or 0),
+         "vph": round(float(r["avg_views_per_hour"] or 0), 1),
+         "mps": round(float(r["med_momentum_per_sub"] or 0), 9)}
+        for r in db.query("SELECT * FROM v_niche_heat ORDER BY med_momentum_per_sub DESC NULLS LAST")]
+
     # Momentum — the trending signal. Empty until snapshots span 12h+, which is
     # correct rather than broken: a growth RATE cannot exist without two
     # readings far enough apart to measure between.
