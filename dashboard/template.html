@@ -1,0 +1,584 @@
+<title>Creator Signal</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,600;6..96,700&family=Spectral:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* ── Creator Signal ─────────────────────────────────────────────────────
+   A bound folio, not a card deck. Series colours are heraldic tinctures
+   (gules, azure, or, vert) — a real colour vocabulary, validated for
+   colour-blind separation in both modes. Gold is a hairline, never a fill.
+   Verdicts follow the ledger convention: entries stand in ink, errors are
+   struck in claret. No red/green pair anywhere.                        */
+:root{
+  --paper:#e8e6e1; --leaf:#f4f3f0; --leaf-2:#dcd9d2;
+  --rule:#c5c1b8; --rule-soft:#d8d4cc; --gild:#8d7126; --gild-line:#bfa45f;
+  --ink:#1c1a16; --ink-2:#4e4a42; --ink-3:#7b7667;
+  --s1:#a03f46; --s2:#3f6ba4; --s3:#c19a3e; --s4:#0f7d61;
+  --up:#3f6ba4; --down:#a03f46; --strike:#a03f46;
+  --ramp:#3f6ba4;
+  --display:"Bodoni Moda",Georgia,"Times New Roman",serif;
+  --text:"Spectral",Georgia,"Times New Roman",serif;
+  --figure:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#171613; --leaf:#1f1d19; --leaf-2:#292621;
+  --rule:#3b3831; --rule-soft:#2d2a25; --gild:#c6a659; --gild-line:#7a6430;
+  --ink:#f4f2ed; --ink-2:#b9b4a8; --ink-3:#877f6f;
+  --s1:#c05d68; --s2:#4e86cd; --s3:#b48d3c; --s4:#33a68e;
+  --up:#4e86cd; --down:#c05d68; --strike:#c05d68;
+  --ramp:#4e86cd;
+}}
+:root[data-theme="dark"]{
+  --paper:#171613; --leaf:#1f1d19; --leaf-2:#292621;
+  --rule:#3b3831; --rule-soft:#2d2a25; --gild:#c6a659; --gild-line:#7a6430;
+  --ink:#f4f2ed; --ink-2:#b9b4a8; --ink-3:#877f6f;
+  --s1:#c05d68; --s2:#4e86cd; --s3:#b48d3c; --s4:#33a68e;
+  --up:#4e86cd; --down:#c05d68; --strike:#c05d68;
+  --ramp:#4e86cd;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--text);
+  font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1140px;margin:0 auto;padding:0 16px;padding-block:34px 60px}
+.mono{font-family:var(--figure);font-variant-numeric:tabular-nums}
+h1,h2,h3{text-wrap:balance;margin:0;font-family:var(--display);font-weight:600}
+.eyebrow{font-family:var(--figure);font-size:10px;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--gild);font-weight:500}
+
+/* ── masthead: engraved title over a gilt double-rule ── */
+.masthead{padding-bottom:20px;border-bottom:1px solid var(--ink);margin-bottom:0;position:relative}
+.masthead::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:1px;background:var(--gild-line)}
+.mhead-grid{display:flex;flex-wrap:wrap;gap:18px 40px;align-items:flex-end;justify-content:space-between}
+.masthead h1{font-size:clamp(34px,6.4vw,58px);font-weight:700;letter-spacing:-.015em;
+  line-height:.98;margin-top:10px}
+.masthead .standfirst{margin:12px 0 0;color:var(--ink-2);max-width:54ch;font-size:16px;
+  font-weight:300;font-style:italic}
+.colophon{font-family:var(--figure);font-size:10.5px;color:var(--ink-3);text-align:right;
+  line-height:1.9;letter-spacing:.02em}
+.colophon b{color:var(--ink);font-weight:500;letter-spacing:.04em}
+
+/* ── KPI band: ruled, not boxed ── */
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);margin:0 0 44px;
+  border-bottom:1px solid var(--rule)}
+.kpi{padding:18px 18px 16px;border-left:1px solid var(--rule-soft)}
+.kpi:first-child{border-left:0;padding-left:0}
+.kpi .v{font-family:var(--figure);font-variant-numeric:tabular-nums;
+  font-size:clamp(19px,2.5vw,25px);font-weight:500;letter-spacing:-.02em;display:block;
+  line-height:1.15;color:var(--ink)}
+.kpi .k{font-family:var(--figure);font-size:9.5px;letter-spacing:.17em;text-transform:uppercase;
+  color:var(--ink-3);margin-top:6px;display:block}
+@media (max-width:880px){.kpis{grid-template-columns:repeat(3,1fr)}
+  .kpi:nth-child(3n+1){border-left:0;padding-left:0}
+  .kpi:nth-child(n+4){border-top:1px solid var(--rule-soft)}}
+@media (max-width:470px){.kpis{grid-template-columns:repeat(2,1fr)}
+  .kpi{border-left:1px solid var(--rule-soft);padding-left:18px}
+  .kpi:nth-child(odd){border-left:0;padding-left:0}
+  .kpi:nth-child(n+3){border-top:1px solid var(--rule-soft)}}
+
+section{margin-bottom:46px}
+.shead{display:flex;flex-wrap:wrap;gap:4px 16px;align-items:baseline;
+  padding-bottom:9px;border-bottom:1px solid var(--gild-line);margin-bottom:15px}
+.shead h2{font-size:clamp(21px,2.8vw,27px);letter-spacing:-.01em}
+.note{color:var(--ink-2);margin:0 0 20px;max-width:70ch;font-weight:300}
+.note b{color:var(--ink);font-weight:500}
+
+/* ── the ledger ── */
+.ledger{border-top:1px solid var(--rule)}
+.row{display:grid;grid-template-columns:1.5fr .62fr 1.45fr auto;gap:18px;align-items:center;
+  padding:15px 2px;border-bottom:1px solid var(--rule-soft)}
+.row.hdr{border-bottom:1px solid var(--rule);padding:8px 2px}
+.row.hdr span{font-family:var(--figure);font-size:9.5px;letter-spacing:.17em;
+  text-transform:uppercase;color:var(--ink-3)}
+.feat{font-weight:500;font-size:16px}
+.feat small{display:block;font-weight:300;color:var(--ink-3);font-size:13px;font-style:italic}
+.eff{font-family:var(--figure);font-variant-numeric:tabular-nums;font-size:20px;font-weight:500}
+.verdict{font-family:var(--figure);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;
+  white-space:nowrap;display:inline-flex;align-items:center;gap:7px}
+.verdict.kept{color:var(--ink-2)}
+.verdict.kept::before{content:"";width:13px;height:1px;background:var(--gild-line);flex:none}
+.verdict.struck{color:var(--strike)}
+.withheld .feat{color:var(--ink-3)}
+.withheld .eff{color:var(--strike);text-decoration:line-through;
+  text-decoration-thickness:1px;text-decoration-skip-ink:none}
+.strip{display:flex;align-items:stretch;gap:3px;height:32px;position:relative}
+.strip::after{content:"";position:absolute;left:0;right:0;top:var(--zero,50%);
+  border-top:1px dashed var(--ink-3);opacity:.5;pointer-events:none}
+.sbar{flex:1;position:relative;background:var(--leaf-2);height:100%}
+.sbar i{position:absolute;left:0;right:0;display:block}
+.slabel{font-family:var(--figure);font-size:10px;color:var(--ink-3);white-space:nowrap;
+  letter-spacing:.04em;margin-top:5px;display:block}
+
+/* ── plates (charts) ── */
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:26px}
+.plate{background:var(--leaf);border:1px solid var(--rule);padding:18px 18px 14px}
+.plate h3{font-family:var(--display);font-size:16px;font-weight:600;margin-bottom:3px}
+.plate .sub{font-family:var(--figure);font-size:10px;color:var(--ink-3);
+  letter-spacing:.09em;text-transform:uppercase;margin-bottom:15px}
+svg{display:block;width:100%;height:auto;overflow:visible}
+.gridline{stroke:var(--rule-soft);stroke-width:1}
+.axis{fill:var(--ink-3);font-family:var(--figure);font-size:10px}
+.axlab{fill:var(--ink-3);font-family:var(--figure);font-size:9px;letter-spacing:.15em;
+  text-transform:uppercase}
+.legend{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:16px;padding-top:13px;
+  border-top:1px solid var(--rule-soft)}
+.lg{display:inline-flex;align-items:center;gap:8px;font-family:var(--figure);font-size:10.5px;
+  color:var(--ink-2);letter-spacing:.06em;text-transform:uppercase}
+.sw{width:14px;height:2px;flex:none}
+
+/* ── pending ── */
+.pending{border:1px solid var(--rule);border-left:2px solid var(--gild-line);
+  background:var(--leaf);padding:22px 24px}
+.timeline{display:flex;flex-wrap:wrap;margin-top:15px;border-top:1px solid var(--rule-soft)}
+.tl{padding:13px 16px 12px;flex:1;min-width:132px;border-left:1px solid var(--rule-soft)}
+.tl:first-child{border-left:0;padding-left:0}
+.tl .d{font-family:var(--figure);font-size:16px;font-weight:500;color:var(--ink-3)}
+.tl.now .d{color:var(--ink)}
+.tl .l{font-family:var(--figure);font-size:9px;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--ink-3);margin-top:4px}
+
+/* ── method ── */
+.method{list-style:none;margin:0;padding:0;counter-reset:m}
+.method li{counter-increment:m;position:relative;padding-left:38px;margin-bottom:14px;
+  color:var(--ink-2);max-width:76ch;font-weight:300}
+.method li::before{content:counter(m,upper-roman);position:absolute;left:0;top:1px;
+  font-family:var(--figure);font-size:10.5px;color:var(--gild);letter-spacing:.06em}
+.method li b{color:var(--ink);font-weight:500}
+
+.tblwrap{overflow-x:auto;border:1px solid var(--rule);background:var(--leaf)}
+table{border-collapse:collapse;width:100%;font-size:13px;min-width:460px}
+th,td{text-align:right;padding:9px 14px;border-bottom:1px solid var(--rule-soft);
+  font-family:var(--figure);font-variant-numeric:tabular-nums;white-space:nowrap}
+th{background:var(--leaf-2);color:var(--ink-3);font-weight:500;font-size:9.5px;
+  letter-spacing:.15em;text-transform:uppercase}
+td:first-child,th:first-child{text-align:left;font-family:var(--text);font-size:14px}
+tbody tr:last-child td{border-bottom:0}
+button.tog{font-family:var(--figure);font-size:10px;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--ink-2);background:transparent;border:1px solid var(--rule);padding:6px 14px;
+  cursor:pointer}
+button.tog:hover{color:var(--ink);border-color:var(--gild-line)}
+button.tog:focus-visible{outline:2px solid var(--gild);outline-offset:2px}
+
+#tip{position:fixed;z-index:50;pointer-events:none;opacity:0;transition:opacity .1s;
+  background:var(--ink);color:var(--paper);font-family:var(--figure);font-size:11px;
+  line-height:1.55;padding:8px 11px;max-width:230px;letter-spacing:.02em;
+  box-shadow:0 6px 22px rgba(28,26,22,.32)}
+.foot{margin-top:46px;padding-top:15px;border-top:1px solid var(--ink);position:relative;
+  font-family:var(--figure);font-size:10px;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--ink-3);display:flex;flex-wrap:wrap;gap:8px 26px;justify-content:space-between}
+.foot::before{content:"";position:absolute;left:0;right:0;top:3px;height:1px;background:var(--gild-line)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media (max-width:660px){
+  .row{grid-template-columns:1fr auto;gap:10px 14px}
+  .row .strip,.row .slabel{display:none}
+  .row.hdr{display:none}
+  .colophon{text-align:left}
+}
+</style>
+<div class="wrap">
+
+<header class="masthead">
+ <div class="mhead-grid">
+  <div>
+    <div class="eyebrow">YouTube Data API v3 &middot; Indian creator economy</div>
+    <h1>Creator Signal</h1>
+    <p class="standfirst">What actually moves views across 93 Indian YouTube channels &mdash; and,
+       just as importantly, which apparent patterns did not survive testing.</p>
+  </div>
+  <div class="colophon">
+    collected <b id="stampDate">Sep 19&ndash;20, 2026</b><br>
+    performance metric <b>views &divide; subscribers</b><br>
+    <span id="stampQuota">1,900 quota units spent</span>
+  </div>
+ </div>
+</header>
+
+<div class="kpis" id="kpis"></div>
+
+<section>
+  <div class="shead">
+    <h2>Findings ledger</h2>
+    <span class="eyebrow">accepted &amp; rejected</span>
+  </div>
+  <p class="note">Every title effect is re-tested inside <b>six age brackets</b>. Older videos have had longer
+     to accumulate views, and title habits are not spread evenly across time &mdash; so an effect that only
+     appears when ages are pooled is an artifact of age, not a property of the title.
+     A finding is kept only if its direction holds in <b>every</b> bracket. Bars rise from the
+     1.00&times; rule where the element helps and fall where it hurts; entries that reverse are
+     struck from the record.</p>
+  <div class="ledger" id="ledger"></div>
+</section>
+
+<section>
+  <div class="shead"><h2>Where the views are</h2></div>
+  <p class="note">View counts are log-normal: a handful of viral videos dominate any average, which is why
+     every test here ranks videos rather than averaging them.</p>
+  <div class="grid2">
+    <div class="plate">
+      <h3>Distribution of views</h3>
+      <div class="sub" id="distSub">long-form videos, log&#8321;&#8320; scale</div>
+      <div id="chartDist"></div>
+    </div>
+    <div class="plate">
+      <h3>Publish day</h3>
+      <div class="sub">median views per subscriber</div>
+      <div id="chartDow"></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="shead"><h2>Publish hour &times; day</h2>
+    <span class="eyebrow">UTC, not viewer time</span></div>
+  <p class="note">Darker means a higher median views-per-subscriber. This is <b>publish</b> hour in UTC &mdash;
+     the public API exposes no viewer timezone, so this cannot tell you when an audience is awake.
+     Cells with fewer than 20 videos are left blank rather than drawn from noise.</p>
+  <div class="plate"><div id="chartHeat"></div></div>
+</section>
+
+<section>
+  <div class="shead"><h2>Niche health</h2></div>
+  <p class="note">Average views per video, by month. A niche where views fall while channels keep publishing
+     is saturating &mdash; supply outpacing demand.</p>
+  <div class="plate">
+    <div id="chartSat"></div>
+    <div class="legend" id="satLegend"></div>
+  </div>
+</section>
+
+<section>
+  <div class="shead"><h2>Channel size vs performance</h2>
+    <span class="eyebrow">one panel per niche</span></div>
+  <p class="note">Each dot is a channel: subscribers across, median views-per-subscriber up.
+     Normalising by subscribers is the only honest way to compare a 26k channel against a 30M one &mdash;
+     raw views would just re-measure fame.</p>
+  <div class="grid2" id="chartScatter"></div>
+</section>
+
+<section>
+  <div class="shead"><h2>Early velocity</h2>
+    <span class="eyebrow">not yet available</span></div>
+  <p class="note">Does a video's first day predict its ceiling? The API returns only <b>today's</b> view count
+     and keeps no history, so this question can only be answered for videos published
+     <b>while the collector runs</b>. It is accumulating now, every six hours.</p>
+  <div class="pending">
+    <div class="eyebrow">collector timeline</div>
+    <div class="timeline" id="veloTimeline"></div>
+    <p class="note" style="margin:14px 0 0">An earlier build of this analysis reported a <b>perfect</b>
+       correlation &mdash; r&sup2; = 1.00, &ldquo;early views explain 100% of final views.&rdquo; It was comparing a
+       number to itself: with one day of data, the &ldquo;24-hour&rdquo; and &ldquo;latest&rdquo; readings were the
+       same snapshot. The giveaway was a video showing <b>more than 100%</b> of its final views arriving on
+       day one. The test now refuses to run until the readings are genuinely far apart.</p>
+  </div>
+</section>
+
+<section>
+  <div class="shead"><h2>Read this before quoting any number</h2></div>
+  <ul class="method">
+    <li><b>Performance means views &divide; subscribers.</b> The public API exposes no click-through rate,
+        watch time or audience retention &mdash; those require owning the channel. Any claim here about
+        &ldquo;what works&rdquo; is a claim about view counts, nothing more.</li>
+    <li><b>These channels were hand-picked, not sampled at random.</b> Findings describe these 93 channels,
+        not YouTube.</li>
+    <li><b>Correlation, not causation.</b> Creators who put numbers in titles differ in many other ways too.</li>
+    <li><b>Shorts are excluded</b> &mdash; <span class="mono" id="shortsN">8,048</span> of them. Their view
+        distribution is entirely different; mixing them in manufactures correlations that really say
+        &ldquo;Shorts get views.&rdquo;</li>
+    <li><b>Thresholds are Bonferroni-adjusted.</b> Testing sixteen features at p&lt;0.05 yields roughly one
+        false positive by chance alone.</li>
+    <li><b>Survivorship.</b> Deleted and private videos are invisible to the API and absent here.</li>
+  </ul>
+</section>
+
+<section>
+  <div class="shead">
+    <h2>Underlying numbers</h2>
+    <button class="tog" id="tblBtn" aria-expanded="false" aria-controls="tblBox">Show table</button>
+  </div>
+  <div id="tblBox" hidden>
+    <div class="tblwrap"><table id="dataTable"></table></div>
+  </div>
+</section>
+
+<div class="foot">
+  <span>PostgreSQL 16 &middot; Python 3.11 &middot; pandas &middot; SciPy &middot; OpenCV &middot; Tesseract</span>
+  <span id="footStats"></span>
+</div>
+</div>
+<div id="tip" role="status" aria-live="polite"></div>
+
+<script>
+const D=__DASHBOARD_DATA__;
+const NICHE=['education_india','finance_india','food_india','tech_india'];
+const NL={education_india:'Education',finance_india:'Finance',food_india:'Food',tech_india:'Tech'};
+// Series order is the heraldic ring: gules, azure, or, vert — ordered so no
+// red/green pair is ever adjacent, which is what makes it pass CVD checks.
+const TINCT={education_india:'gules',finance_india:'azure',food_india:'or',tech_india:'vert'};
+const SV=['--s1','--s2','--s3','--s4'];
+const cssv=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const SC=n=>`var(${SV[NICHE.indexOf(n)]})`;
+const fmt=n=>n>=1e6?(n/1e6).toFixed(n>=1e7?0:1)+'M':n>=1e3?(n/1e3).toFixed(n>=1e4?0:1)+'k':String(n);
+const num=n=>n.toLocaleString('en-US');
+const DOW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const SVGNS='http://www.w3.org/2000/svg';
+const el=(t,a={},p)=>{const e=document.createElementNS(SVGNS,t);
+  for(const k in a)e.setAttribute(k,a[k]); if(p)p.appendChild(e); return e;};
+
+/* ---------- tooltip ---------- */
+const tip=document.getElementById('tip');
+function showTip(e,html){tip.innerHTML=html;tip.style.opacity='1';
+  const r=tip.getBoundingClientRect();
+  let x=e.clientX+14,y=e.clientY-10;
+  if(x+r.width>innerWidth-8)x=e.clientX-r.width-14;
+  if(y+r.height>innerHeight-8)y=innerHeight-r.height-8;
+  if(y<8)y=8;
+  tip.style.left=x+'px';tip.style.top=y+'px';}
+function hideTip(){tip.style.opacity='0';}
+function bind(node,html){
+  node.addEventListener('mouseenter',e=>showTip(e,html));
+  node.addEventListener('mousemove',e=>showTip(e,html));
+  node.addEventListener('mouseleave',hideTip);
+  node.style.cursor='default';
+}
+
+/* ---------- KPIs ---------- */
+const k=D.kpi;
+document.getElementById('kpis').innerHTML=[
+  [num(k.ch),'channels'],[num(k.vids),'videos'],[num(k.longform),'long-form'],
+  [num(k.snaps),'snapshots'],[num(k.thumbs),'thumbnails read'],[String(k.niches),'niches']
+].map(([v,kk])=>`<div class="kpi"><span class="v">${v}</span><span class="k">${kk}</span></div>`).join('');
+document.getElementById('shortsN').textContent=num(k.vids-k.longform);
+document.getElementById('footStats').textContent=
+  `${num(k.longform)} long-form videos analysed · ${D.velocity.days} days of snapshots so far`;
+document.getElementById('stampQuota').textContent=`${num(k.vids)} videos · 0.04 quota units each`;
+
+/* ---------- ledger ---------- */
+const LAB={has_exclamation:['Exclamation mark','“Don’t miss this!”'],
+           has_brackets:['Brackets in title','“[Tutorial]”, “(2026)”'],
+           has_number:['Number in title','“7 ways to…”'],
+           has_question:['Question mark','“Is this worth it?”']};
+const ORDER=['has_exclamation','has_brackets','has_number','has_question'];
+const led=document.getElementById('ledger');
+led.innerHTML='<div class="row hdr"><span>Title element</span><span>Overall effect</span>'
+  +'<span>Effect across six age brackets</span><span>Verdict</span></div>';
+ORDER.forEach(f=>{
+  const s=D.strata[f]; if(!s)return;
+  const rs=s.strata.map(r=>r.ratio), mx=Math.max(1.05,...rs), mn=Math.min(.95,...rs);
+  const span=mx-mn;
+  const zeroPct=(mx-1)/span*100;
+  const bars=s.strata.map(r=>{
+    const up=r.ratio>=1;
+    const zero=(mx-1)/span*100;
+    const h=Math.abs(r.ratio-1)/span*100;
+    const top=up?zero-h:zero;
+    return `<span class="sbar" data-t="${r.lo}–${r.hi} days old&lt;br&gt;<b>${r.ratio.toFixed(2)}×</b> · n=${num(r.n)}"><i style="background:${up?'var(--up)':'var(--down)'};top:${top}%;height:${Math.max(h,1.6)}%"></i></span>`;
+  }).join('');
+  const rob=s.robust;
+  led.insertAdjacentHTML('beforeend',
+   `<div class="row${rob?'':' withheld'}">
+      <span class="feat">${LAB[f][0]}<small>${LAB[f][1]}</small></span>
+      <span class="eff">${s.overall.toFixed(2)}×</span>
+      <span><span class="strip" style="--zero:${zeroPct.toFixed(2)}%">${bars}</span>
+        <span class="slabel">${Math.min(...rs).toFixed(2)}× – ${Math.max(...rs).toFixed(2)}× across brackets</span></span>
+      <span class="verdict ${rob?'kept':'struck'}">${rob?'entered':'struck — reverses by age'}</span>
+    </div>`);
+});
+led.querySelectorAll('.sbar').forEach(b=>bind(b,b.dataset.t));
+
+/* ---------- distribution ---------- */
+(function(){
+  const W=520,H=190,L=34,R=8,T=10,B=34,c=D.loghist.counts,e=D.loghist.edges;
+  const s=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'Distribution of view counts'},
+    document.getElementById('chartDist'));
+  // Domain is 16% above the tallest bar, so the median annotation has a clear
+  // band to sit in. Gridline labels still name true counts — the scale is honest,
+  // it just isn't packed to the ceiling.
+  const mx=Math.max(...c)*1.16,bw=(W-L-R)/c.length;
+  [0,.5,1].forEach(f=>{const y=T+(H-T-B)*(1-f);
+    el('line',{x1:L,x2:W-R,y1:y,y2:y,class:'gridline'},s);
+    el('text',{x:L-6,y:y+3,class:'axis','text-anchor':'end'},s).textContent=fmt(Math.round(mx*f));});
+  c.forEach((v,i)=>{
+    const h=(H-T-B)*(v/mx),x=L+i*bw,y=H-B-h;
+    const r=el('rect',{x:x+1,y:y,width:Math.max(bw-2,1),height:Math.max(h,.6),
+      fill:'var(--ramp)',rx:0},s);
+    bind(r,`<b>${num(v)}</b> videos<br>${fmt(Math.round(10**e[i]))} – ${fmt(Math.round(10**e[i+1]))} views`);
+  });
+  [2,3,4,5,6,7].forEach(p=>{
+    const f=(p-e[0])/(e[e.length-1]-e[0]); if(f<0||f>1)return;
+    el('text',{x:L+f*(W-L-R),y:H-B+15,class:'axis','text-anchor':'middle'},s)
+      .textContent=fmt(10**p);});
+  el('text',{x:L,y:H-4,class:'axlab'},s).textContent='views per video';
+  const md=D.dist.median,f=(Math.log10(md)-e[0])/(e[e.length-1]-e[0]),x=L+f*(W-L-R);
+  el('line',{x1:x,x2:x,y1:T,y2:H-B,stroke:'var(--gild)','stroke-width':1.5,'stroke-dasharray':'4 3'},s);
+  // anchor the note on whichever side of the rule has room
+  const rightRoom=(W-R)-x>96;
+  el('text',{x:rightRoom?x+6:x-6,y:T+9,class:'axis',fill:'var(--gild)',
+    'text-anchor':rightRoom?'start':'end'},s).textContent=`median ${fmt(Math.round(md))}`;
+  document.getElementById('distSub').textContent=
+    `median ${fmt(Math.round(md))} · mean ${fmt(Math.round(D.dist.mean))} — the gap is the skew`;
+})();
+
+/* ---------- day of week ---------- */
+(function(){
+  const W=520,H=190,L=44,R=10,T=10,B=34;
+  const s=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'Median views per subscriber by publish day'},
+    document.getElementById('chartDow'));
+  const d=[...D.dow].sort((a,b)=>a.dow-b.dow),mx=Math.max(...d.map(r=>r.med))*1.15;
+  const bw=(W-L-R)/d.length;
+  [0,.5,1].forEach(f=>{const y=T+(H-T-B)*(1-f);
+    el('line',{x1:L,x2:W-R,y1:y,y2:y,class:'gridline'},s);
+    el('text',{x:L-6,y:y+3,class:'axis','text-anchor':'end'},s).textContent=(mx*f).toFixed(3);});
+  const best=Math.max(...d.map(r=>r.med));
+  d.forEach((r,i)=>{
+    const h=(H-T-B)*(r.med/mx),x=L+i*bw,y=H-B-h,top=r.med===best;
+    const rect=el('rect',{x:x+bw*.16,y:y,width:bw*.68,height:Math.max(h,1),
+      fill:top?'var(--gild)':'var(--ramp)',rx:0},s);
+    bind(rect,`<b>${DOW[r.dow]}</b><br>median ${r.med.toFixed(4)} views/sub<br>${num(r.n)} videos`);
+    el('text',{x:x+bw/2,y:H-B+15,class:'axis','text-anchor':'middle',
+      fill:top?'var(--gild)':'var(--ink-3)'},s).textContent=DOW[r.dow];
+    if(top)el('text',{x:x+bw/2,y:y-6,class:'axis','text-anchor':'middle',fill:'var(--gild)'},s)
+      .textContent=r.med.toFixed(3);
+  });
+  const my=T+(H-T-B)/2;
+  el('text',{x:11,y:my,class:'axlab','text-anchor':'middle',
+    transform:`rotate(-90 11 ${my})`},s).textContent='views/sub';
+})();
+
+/* ---------- heatmap ---------- */
+(function(){
+  const cw=34,ch=27,L=44,T=22,W=L+24*cw+14,H=T+7*ch+30;
+  const s=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'Median views per subscriber by publish day and hour'},
+    document.getElementById('chartHeat'));
+  const ok=D.heat.filter(r=>r.n>=20),vals=ok.map(r=>r.med);
+  const lo=Math.min(...vals),hi=Math.max(...vals);
+  const map={}; D.heat.forEach(r=>map[r.dow+'_'+r.h]=r);
+  for(let h=0;h<24;h+=3)el('text',{x:L+h*cw+cw/2,y:T-7,class:'axis','text-anchor':'middle'},s)
+    .textContent=String(h).padStart(2,'0');
+  for(let d=0;d<7;d++){
+    el('text',{x:L-8,y:T+d*ch+ch/2+3.5,class:'axis','text-anchor':'end'},s).textContent=DOW[d];
+    for(let h=0;h<24;h++){
+      const r=map[d+'_'+h],x=L+h*cw,y=T+d*ch;
+      const good=r&&r.n>=20;
+      const t=good?(r.med-lo)/(hi-lo||1):0;
+      const rect=el('rect',{x:x+1,y:y+1,width:cw-1,height:ch-1,rx:0,
+        fill:good?'var(--ramp)':'var(--leaf-2)','fill-opacity':good?(0.14+t*0.86).toFixed(3):1},s);
+      if(r)bind(rect,`<b>${DOW[d]} ${String(h).padStart(2,'0')}:00 UTC</b><br>`+
+        (good?`median ${r.med.toFixed(4)} views/sub<br>${num(r.n)} videos`
+             :`only ${num(r.n)} videos — too few to read`));
+    }
+  }
+  el('text',{x:L,y:H-8,class:'axlab'},s).textContent='publish hour (UTC)';
+  const gx=W-186;
+  el('text',{x:gx-8,y:H-4,class:'axis','text-anchor':'end'},s).textContent=lo.toFixed(3);
+  for(let i=0;i<22;i++)el('rect',{x:gx+i*7,y:H-16,width:7,height:9,fill:'var(--ramp)',
+    'fill-opacity':(0.14+(i/21)*0.86).toFixed(3)},s);
+  el('text',{x:gx+158,y:H-4,class:'axis','text-anchor':'end'},s).textContent=hi.toFixed(3);
+})();
+
+/* ---------- saturation ---------- */
+(function(){
+  const W=900,H=260,L=56,R=92,T=14,B=42;  // R leaves a gutter for direct labels
+  const s=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'Average views per video by month and niche'},
+    document.getElementById('chartSat'));
+  const months=[...new Set(D.sat.map(r=>r.m))].sort();
+  const mx=Math.max(...D.sat.map(r=>r.a))*1.08;
+  const X=m=>L+months.indexOf(m)/(months.length-1)*(W-L-R);
+  const Y=v=>T+(H-T-B)*(1-v/mx);
+  [0,.25,.5,.75,1].forEach(f=>{const y=Y(mx*f);
+    el('line',{x1:L,x2:W-R,y1:y,y2:y,class:'gridline'},s);
+    el('text',{x:L-8,y:y+3.5,class:'axis','text-anchor':'end'},s).textContent=fmt(Math.round(mx*f));});
+  months.forEach((m,i)=>{if(i%3)return;
+    el('text',{x:X(m),y:H-B+16,class:'axis','text-anchor':'middle'},s).textContent=m.slice(2);});
+  // Collect end-label positions first, then spread any that would collide.
+  // Four niches converge at the right edge; drawn naively, Education and
+  // Finance land 5.9px apart and overprint each other.
+  const ends=[];
+  NICHE.forEach(n=>{
+    const pts=D.sat.filter(r=>r.n===n).sort((a,b)=>a.m<b.m?-1:1); if(!pts.length)return;
+    const lp=pts[pts.length-1]; ends.push({n,y:Y(lp.a),x:X(lp.m)});
+  });
+  ends.sort((a,b)=>a.y-b.y);
+  const MINGAP=13;
+  for(let i=1;i<ends.length;i++)
+    if(ends[i].y-ends[i-1].y<MINGAP) ends[i].y=ends[i-1].y+MINGAP;
+  NICHE.forEach(n=>{
+    const pts=D.sat.filter(r=>r.n===n).sort((a,b)=>a.m<b.m?-1:1); if(!pts.length)return;
+    el('path',{d:pts.map((p,i)=>`${i?'L':'M'}${X(p.m).toFixed(1)} ${Y(p.a).toFixed(1)}`).join(' '),
+      fill:'none',stroke:SC(n),'stroke-width':1.75,'stroke-linejoin':'round','stroke-linecap':'butt'},s);
+    pts.forEach(p=>{
+      const c=el('circle',{cx:X(p.m),cy:Y(p.a),r:3.2,fill:SC(n),stroke:'var(--leaf)','stroke-width':2},s);
+      bind(c,`<b>${NL[n]}</b> · ${p.m}<br>avg ${num(p.a)} views/video<br>${num(p.v)} videos published`);
+    });
+    const e2=ends.find(o=>o.n===n), ly=e2.y, py=Y(pts[pts.length-1].a);
+    // leader from the line's true end to the nudged label, so the label still points at its series
+    if(Math.abs(ly-py)>1.5)
+      el('path',{d:`M${e2.x+3} ${py} L${e2.x+9} ${ly}`,fill:'none',stroke:SC(n),
+        'stroke-width':1,'stroke-opacity':.55},s);
+    el('text',{x:e2.x+13,y:ly+3.5,class:'axis',fill:SC(n),'font-weight':'600'},s)
+      .textContent=NL[n];
+  });
+  const my2=T+(H-T-B)/2;
+  el('text',{x:13,y:my2,class:'axlab','text-anchor':'middle',
+    transform:`rotate(-90 13 ${my2})`},s).textContent='avg views/video';
+  document.getElementById('satLegend').innerHTML=NICHE.map(n=>
+    `<span class="lg"><span class="sw" style="background:${SC(n)}"></span>${NL[n]}</span>`).join('')
+    +`<span class="lg" style="color:var(--ink-3)">tinctures: ${NICHE.map(n=>TINCT[n]).join(' · ')}</span>`;
+})();
+
+/* ---------- scatter small multiples ---------- */
+(function(){
+  const box=document.getElementById('chartScatter');
+  // views/sub is as skewed as views itself: one channel near 4 flattens every
+  // other point onto the floor on a linear scale. Log y, like the view axis.
+  const lv=D.channels.map(c=>Math.log10(Math.max(c.v,1e-4)));
+  const y0=Math.floor(Math.min(...lv)),y1=Math.ceil(Math.max(...lv));
+  const xs=D.channels.map(c=>Math.log10(Math.max(c.s,1000)));
+  const x0=Math.min(...xs),x1=Math.max(...xs);
+  NICHE.forEach(n=>{
+    const pts=D.channels.filter(c=>c.n===n); if(!pts.length)return;
+    const card=document.createElement('div');card.className='card';
+    card.innerHTML=`<h3>${NL[n]}</h3><div class="sub">${pts.length} channels &middot; log scale</div>`;
+    box.appendChild(card);
+    const W=420,H=210,L=52,R=14,T=12,B=32;
+    const s=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img',
+      'aria-label':`${NL[n]}: subscribers versus median views per subscriber`},card);
+    const X=v=>L+(Math.log10(Math.max(v,1000))-x0)/(x1-x0)*(W-L-R);
+    const Y=v=>T+(H-T-B)*(1-(Math.log10(Math.max(v,1e-4))-y0)/(y1-y0));
+    for(let p=y0;p<=y1;p++){const y=Y(10**p);
+      el('line',{x1:L,x2:W-R,y1:y,y2:y,class:'gridline'},s);
+      el('text',{x:L-7,y:y+3.5,class:'axis','text-anchor':'end'},s)
+        .textContent=p>=0?String(10**p):(10**p).toFixed(-p);}
+    [4,5,6,7].forEach(p=>{const x=X(10**p); if(x<L-1||x>W-R+1)return;
+      el('text',{x:x,y:H-B+16,class:'axis','text-anchor':'middle'},s).textContent=fmt(10**p);});
+    pts.forEach(c=>{
+      const dot=el('circle',{cx:X(c.s),cy:Y(c.v),r:4.6,fill:SC(n),
+        stroke:'var(--leaf)','stroke-width':1.5,'fill-opacity':.9},s);
+      bind(dot,`<b>${c.t}</b><br>${num(c.s)} subscribers<br>${c.v.toFixed(4)} views/sub · ${c.c} videos`);
+    });
+    el('text',{x:L,y:H-3,class:'axlab'},s).textContent='subscribers';
+  });
+})();
+
+/* ---------- velocity timeline ---------- */
+(function(){
+  const v=D.velocity;
+  document.getElementById('veloTimeline').innerHTML=[
+    [v.started,'collector started','now'],
+    [v.hrs+'h','elapsed','now'],
+    [num(v.cand),'candidate videos','now'],
+    [v.d72,'3-day answer',''],
+    [v.d168,'7-day answer','']
+  ].map(([d,l,c])=>`<div class="tl ${c}"><div class="d">${d}</div><div class="l">${l}</div></div>`).join('');
+})();
+
+/* ---------- table ---------- */
+(function(){
+  const t=document.getElementById('dataTable');
+  const rows=[...D.channels].sort((a,b)=>b.v-a.v);
+  t.innerHTML='<thead><tr><th>Channel</th><th>Niche</th><th>Subscribers</th>'
+    +'<th>Median views/sub</th><th>Videos</th></tr></thead><tbody>'
+    +rows.map(c=>`<tr><td>${c.t}</td><td>${NL[c.n]}</td><td>${num(c.s)}</td>`
+    +`<td>${c.v.toFixed(4)}</td><td>${c.c}</td></tr>`).join('')+'</tbody>';
+  const b=document.getElementById('tblBtn'),box=document.getElementById('tblBox');
+  b.addEventListener('click',()=>{const open=box.hidden;box.hidden=!open;
+    b.setAttribute('aria-expanded',String(open));b.textContent=open?'Hide table':'Show table';});
+})();
+
+</script>
