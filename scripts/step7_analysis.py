@@ -50,6 +50,20 @@ log = get_logger("step7")
 MIN_SAMPLE = 30          # below this, don't report a test at all
 ALPHA = 0.05
 
+# How old the LATEST reading must be before the velocity test will run.
+#
+# This sets the question being asked, and it is a real trade-off:
+#   168h (7d, default) -> "does day 1 predict the video's WEEK-1 ceiling?"
+#   72h  (3d)          -> "does day 1 predict day 3?" — available sooner, but
+#                         most videos are still climbing at 72h, so it measures
+#                         early momentum rather than an eventual ceiling.
+#
+# Lowering it does NOT make results appear immediately. Videos still have to be
+# published while the collector runs and then age past the threshold. Override
+# with --velocity-min-age-hours; whatever is used is recorded in findings.json
+# so a result always carries the question it actually answers.
+VELOCITY_MIN_AGE_HOURS = 168
+
 
 def load(niche: str | None) -> pd.DataFrame:
     """One row per long-form video with every feature joined."""
@@ -260,7 +274,8 @@ def a3_timing(df: pd.DataFrame, findings: list) -> None:
             print(f"    {idx}  n={int(r['count']):>5}  median views/sub={10**r['median']:.4f}")
 
 
-def a4_velocity(df: pd.DataFrame, findings: list) -> None:
+def a4_velocity(df: pd.DataFrame, findings: list,
+                min_age_hours: int = VELOCITY_MIN_AGE_HOURS) -> None:
     print("\n" + "=" * 68)
     print("  4. EARLY VELOCITY -> EVENTUAL CEILING")
     print("=" * 68)
@@ -279,7 +294,7 @@ def a4_velocity(df: pd.DataFrame, findings: list) -> None:
     #
     # MIN_LATEST_AGE_H requires the newest reading to be at least a week old,
     # so there is genuine growth between the two points.
-    MIN_LATEST_AGE_H = 168  # 7 days
+    MIN_LATEST_AGE_H = min_age_hours
 
     vel = pd.read_sql(
         "SELECT * FROM v_video_velocity WHERE is_short IS NOT TRUE "
@@ -335,6 +350,7 @@ def a4_velocity(df: pd.DataFrame, findings: list) -> None:
     findings.append({
         "analysis": "velocity", "spearman_rho": round(float(rho), 4),
         "r_squared": round(float(r ** 2), 4), "n": int(len(v)), "p_value": float(p),
+        "min_latest_age_hours": int(MIN_LATEST_AGE_H),
     })
 
 
@@ -396,6 +412,10 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--niche", help="Restrict to one niche")
     ap.add_argument("--out", default=str(EXPORTS_DIR / "findings.json"))
+    ap.add_argument("--velocity-min-age-hours", type=int, default=VELOCITY_MIN_AGE_HOURS,
+                    help=f"How old the latest reading must be for the velocity test "
+                         f"(default {VELOCITY_MIN_AGE_HOURS}=7d; 72=3d unlocks sooner "
+                         f"but measures momentum, not a ceiling)")
     args = ap.parse_args()
 
     df = prep(load(args.niche))
@@ -415,7 +435,7 @@ def main() -> int:
     a1_binary_features(df, findings)
     a2_continuous(df, findings)
     a3_timing(df, findings)
-    a4_velocity(df, findings)
+    a4_velocity(df, findings, args.velocity_min_age_hours)
     a5_saturation(findings)
     a6_engagement(df, findings)
 
