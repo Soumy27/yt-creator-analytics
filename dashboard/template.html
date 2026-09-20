@@ -8,31 +8,16 @@
    Verdicts follow the ledger convention: entries stand in ink, errors are
    struck in claret. No red/green pair anywhere.                        */
 :root{
-  --paper:#e8e6e1; --leaf:#f4f3f0; --leaf-2:#dcd9d2;
-  --rule:#c5c1b8; --rule-soft:#d8d4cc; --gild:#8d7126; --gild-line:#bfa45f;
-  --ink:#1c1a16; --ink-2:#4e4a42; --ink-3:#7b7667;
+  color-scheme: light;   /* committed single theme — never dark-ify controls */
+  --paper:#ffffff; --leaf:#ffffff; --leaf-2:#f4f3f0;
+  --rule:#d9d5cc; --rule-soft:#eceae4; --gild:#8d7126; --gild-line:#c3a862;
+  --ink:#1b1915; --ink-2:#4e4a42; --ink-3:#7b7667;
   --s1:#a03f46; --s2:#3f6ba4; --s3:#c19a3e; --s4:#0f7d61;
   --up:#3f6ba4; --down:#a03f46; --strike:#a03f46;
   --ramp:#3f6ba4;
   --display:"Bodoni Moda",Georgia,"Times New Roman",serif;
   --text:"Spectral",Georgia,"Times New Roman",serif;
   --figure:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
-}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --paper:#171613; --leaf:#1f1d19; --leaf-2:#292621;
-  --rule:#3b3831; --rule-soft:#2d2a25; --gild:#c6a659; --gild-line:#7a6430;
-  --ink:#f4f2ed; --ink-2:#b9b4a8; --ink-3:#877f6f;
-  --s1:#c05d68; --s2:#4e86cd; --s3:#b48d3c; --s4:#33a68e;
-  --up:#4e86cd; --down:#c05d68; --strike:#c05d68;
-  --ramp:#4e86cd;
-}}
-:root[data-theme="dark"]{
-  --paper:#171613; --leaf:#1f1d19; --leaf-2:#292621;
-  --rule:#3b3831; --rule-soft:#2d2a25; --gild:#c6a659; --gild-line:#7a6430;
-  --ink:#f4f2ed; --ink-2:#b9b4a8; --ink-3:#877f6f;
-  --s1:#c05d68; --s2:#4e86cd; --s3:#b48d3c; --s4:#33a68e;
-  --up:#4e86cd; --down:#c05d68; --strike:#c05d68;
-  --ramp:#4e86cd;
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--text);
