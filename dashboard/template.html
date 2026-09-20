@@ -103,6 +103,18 @@ section{margin-bottom:46px}
   font-weight:500;text-align:right;white-space:nowrap}
 .mval small{display:block;font-size:9px;letter-spacing:.12em;text-transform:uppercase;
   color:var(--ink-3);font-weight:400;margin-top:2px}
+.plain{border:1px solid var(--rule);border-left:2px solid var(--gild-line);
+  background:var(--leaf);padding:22px 26px}
+.plain p{margin:0 0 14px;max-width:74ch;font-size:15.5px;line-height:1.72;color:var(--ink-2)}
+.plain p:last-child{margin-bottom:0}
+.plain b{color:var(--ink);font-weight:600}
+.plain .lede{font-size:17px;color:var(--ink)}
+.plain ul{margin:0 0 14px;padding:0;list-style:none}
+.plain li{position:relative;padding-left:20px;margin-bottom:9px;max-width:74ch;color:var(--ink-2)}
+.plain li::before{content:"";position:absolute;left:0;top:11px;width:9px;height:1px;
+  background:var(--gild-line)}
+.plain .caveat{border-top:1px solid var(--rule-soft);padding-top:14px;margin-top:18px;
+  font-size:14px;color:var(--ink-3)}
 /* ── plates (charts) ── */
 .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:26px}
 .plate{background:var(--leaf);border:1px solid var(--rule);padding:18px 18px 14px}
@@ -188,6 +200,14 @@ button.tog:focus-visible{outline:2px solid var(--gild);outline-offset:2px}
 </header>
 
 <div class="kpis" id="kpis"></div>
+
+<section>
+  <div class="shead">
+    <h2>In plain words</h2>
+    <span class="eyebrow">written from the current data</span>
+  </div>
+  <div id="plain" class="plain"></div>
+</section>
 
 <section>
   <div class="shead">
@@ -357,6 +377,117 @@ document.getElementById('shortsN').textContent=num(k.vids-k.longform);
 document.getElementById('footStats').textContent=
   `${num(k.longform)} long-form videos analysed · ${D.velocity.days} days of snapshots so far`;
 document.getElementById('stampQuota').textContent=`${num(k.vids)} videos · 0.04 quota units each`;
+
+/* ---------- plain-words summary (generated, never hand-written) ---------- */
+(function(){
+  const box=document.getElementById('plain'), k=D.kpi;
+  const S=[]; // sentences
+
+  const pct=n=>Math.round(n*100);
+  const shorts=k.vids-k.longform;
+
+  S.push(`<p class="lede">This page tracks <b>${num(k.ch)} Indian YouTube channels</b> across
+    ${k.niches} subjects &mdash; ${NICHE.map(n=>NL[n].toLowerCase()).join(', ')} &mdash; and
+    <b>${num(k.vids)} of their videos</b>. Every few hours it records how many views each video
+    has, building a history that YouTube itself does not hand out.</p>`);
+
+  // how performance is measured
+  S.push(`<p>&ldquo;Doing well&rdquo; here means <b>views divided by subscribers</b>, not raw views.
+    A channel with 30 million subscribers will beat one with 26,000 on raw views no matter what it
+    posts, so raw views would only ever measure fame. Dividing by subscriber count asks a fairer
+    question: <i>did this video do well <b>for a channel that size</b>?</i></p>`);
+
+  // findings, in plain words
+  const kept=[], dropped=[];
+  const NAME={has_exclamation:'an exclamation mark', has_brackets:'brackets like [Tutorial]',
+              has_number:'a number', has_question:'a question mark', has_text:'text on the thumbnail'};
+  Object.entries(D.strata).forEach(([f,s])=>{
+    if(!NAME[f]) return;
+    (s.robust?kept:dropped).push({f,s});
+  });
+  kept.sort((a,b)=>Math.abs(b.s.overall-1)-Math.abs(a.s.overall-1));
+
+  if(kept.length){
+    S.push(`<p><b>What actually seems to help.</b> Out of everything tested, these held up:</p><ul>`+
+      kept.map(({f,s})=>{
+        const up=s.overall>1, x=up?s.overall.toFixed(2):(1/s.overall).toFixed(2);
+        return `<li>Titles with <b>${NAME[f]}</b> got about <b>${x}&times; ${up?'more':'fewer'}</b>
+          views than titles without, and that stayed true for new and old videos alike.</li>`;
+      }).join('')+`</ul>`);
+  }
+
+  if(dropped.length){
+    S.push(`<p><b>What looked true but was not.</b> ${dropped.map(({f})=>NAME[f]).join(' and ')}
+      appeared to matter at first. But those videos happened to be <i>newer</i> than the rest, and
+      newer videos have simply had less time to gather views. Once videos were compared only against
+      others of a similar age, the effect reversed. ${dropped.length>1?'They are':'It is'} left out
+      rather than reported.</p>`);
+  }
+
+  // best day
+  if(D.dow&&D.dow.length){
+    const best=[...D.dow].sort((a,b)=>b.med-a.med)[0];
+    const worst=[...D.dow].sort((a,b)=>a.med-b.med)[0];
+    const gap=((best.med/worst.med-1)*100).toFixed(0);
+    S.push(`<p><b>Timing.</b> Videos published on <b>${DOW[best.dow]}</b> performed best and
+      <b>${DOW[worst.dow]}</b> worst, a gap of about <b>${gap}%</b>. Treat that as a mild nudge, not
+      a rule &mdash; it is publish time in UTC, and the public data says nothing about where or when
+      the audience actually watched.</p>`);
+  }
+
+  // niche direction: last 3 months vs the 3 before
+  const dirs=[];
+  NICHE.forEach(n=>{
+    const pts=D.sat.filter(r=>r.n===n).sort((a,b)=>a.m<b.m?-1:1);
+    if(pts.length<8) return;
+    const recent=pts.slice(-3), prior=pts.slice(-6,-3);
+    const ra=recent.reduce((s,r)=>s+r.a,0)/recent.length;
+    const pa=prior.reduce((s,r)=>s+r.a,0)/prior.length;
+    if(pa>0) dirs.push({n, ch:(ra/pa-1)});
+  });
+  if(dirs.length){
+    dirs.sort((a,b)=>b.ch-a.ch);
+    const up=dirs[0], down=dirs[dirs.length-1];
+    S.push(`<p><b>Which subjects are getting easier or harder.</b> Comparing the last three months
+      with the three before, <b>${NL[up.n]}</b> is the healthiest
+      (${up.ch>=0?'up':'down'} about ${Math.abs(pct(up.ch))}% in average views per video) and
+      <b>${NL[down.n]}</b> the toughest
+      (${down.ch>=0?'up':'down'} about ${Math.abs(pct(down.ch))}%). A subject where views fall while
+      people keep posting is getting crowded.</p>`);
+  }
+
+  // what is rising right now
+  if(D.momentum&&D.momentum.length){
+    const top=[...D.momentum].sort((a,b)=>b.mps-a.mps)[0];
+    S.push(`<p><b>Gaining fastest right now.</b> &ldquo;${top.t.replace(/</g,'&lt;')}&rdquo; by
+      <b>${top.c.replace(/</g,'&lt;')}</b> &mdash; about <b>${fmt(Math.round(top.vph))} views an
+      hour</b> from a ${num(top.subs)}-subscriber channel, ${top.age} hours after posting. The
+      &ldquo;Rising now&rdquo; list below ranks by views gained per hour <i>per subscriber</i>, which
+      is why smaller channels can appear above much larger ones.</p>`);
+  } else {
+    S.push(`<p><b>Gaining fastest right now.</b> Not available yet. Measuring a <i>rate</i> needs two
+      readings at least 12 hours apart, and only <b>${D.velocity.hrs} hours</b> of history have been
+      collected so far. It fills in on its own.</p>`);
+  }
+
+  // velocity status
+  const v=D.velocity;
+  S.push(`<p><b>Still being collected.</b> Whether a video's first day predicts how far it
+    eventually goes needs about a week of history per video. There ${v.days===1?'is':'are'}
+    <b>${v.days} day${v.days===1?'':'s'}</b> so far, so that answer arrives around
+    <b>${v.d168}</b>. Nothing to fix &mdash; it is waiting on time passing.</p>`);
+
+  // the honest limits, in plain words
+  S.push(`<div class="caveat"><p style="margin-bottom:10px"><b>Before you rely on any of this.</b>
+    These ${num(k.ch)} channels were picked by hand, so the findings describe <i>them</i>, not
+    YouTube as a whole. Nothing here proves cause: creators who put numbers in titles differ in many
+    other ways too. ${num(shorts)} Shorts were excluded, because they gather views so differently
+    that mixing them in invents patterns that are really just &ldquo;Shorts get views&rdquo;. And the
+    public data contains no click-through rate and no watch time &mdash; those belong to whoever owns
+    the channel.</p></div>`);
+
+  box.innerHTML=S.join('');
+})();
 
 /* ---------- momentum (trending) ---------- */
 (function(){
